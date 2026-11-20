@@ -1,0 +1,64 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Design tokens — docs/design.md §1. Values are RGB channels so Tailwind opacity modifiers work. */
+@layer base {
+  :root {
+    --color-bg: 255 251 242;
+    --color-surface: 255 255 255;
+    --color-muted: 250 240 215;
+    --color-border: 234 223 196;
+    --color-text: 26 31 46;
+    --color-text-muted: 91 98 117;
+    --color-primary: 213 0 50;
+    --color-primary-hover: 176 0 42;
+    --color-accent: 255 23 68;
+    --color-warning: 198 40 40;
+    --color-success: 21 128 61;
+    --color-amber: 245 158 11;
+    --color-warning-tint: #fdf0f0;
+    --color-success-tint: #f0faf3;
+    color-scheme: light;
+  }
+
+  html.dark {
+    --color-bg: 11 21 48;
+    --color-surface: 19 33 63;
+    --color-muted: 27 43 82;
+    --color-border: 38 56 95;
+    --color-text: 255 248 231;
+    --color-text-muted: 184 191 211;
+    --color-primary: 213 0 50;
+    --color-primary-hover: 224 16 58;
+    --color-accent: 255 23 68;
+    --color-warning: 248 113 113;
+    --color-success: 74 222 128;
+    --color-amber: 245 158 11;
+    --color-warning-tint: rgba(248, 113, 113, 0.15);
+    --color-success-tint: rgba(74, 222, 128, 0.15);
+    color-scheme: dark;
+  }
+
+  body {
+    @apply bg-bg font-sans text-base text-text antialiased;
+    transition:
+      background-color 200ms ease,
+      color 200ms ease;
+  }
+
+  ::selection {
+    @apply bg-accent/25;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
