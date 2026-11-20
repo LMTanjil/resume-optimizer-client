@@ -201,7 +201,7 @@ AppLayout   (grid areas "sidebar navbar" / "sidebar content"; state: collapsed, 
 │   └── collapse toggle (md and up)
 ├── Navbar variant="authenticated"   props: menuOpen, onOpenMenu, menuButtonRef
 │   ├── Button ghost hamburger (< md) → open drawer
-│   ├── Link "ResumeAI" → /dashboard
+│   ├── Link "ResumeAI" → / (landing page)
 │   ├── ThemeToggle
 │   └── ProfileDropdown   avatar → menu: name/email · Settings (toast) · Logout (/logout)
 └── <main id="main"> container (max-w-content)

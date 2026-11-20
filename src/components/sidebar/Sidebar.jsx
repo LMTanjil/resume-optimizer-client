@@ -86,7 +86,7 @@ export default function Sidebar({
         {/* Drawer header (mobile only) */}
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-border px-4 md:hidden">
           <Link
-            to="/dashboard"
+            to="/"
             onClick={onCloseMobile}
             className="rounded-lg text-xl font-bold text-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >

@@ -42,7 +42,7 @@ export default function Navbar({
               onClick={onOpenMenu}
             />
           )}
-          <Link to={isAuthed ? "/dashboard" : "/"} className={LOGO_CLASSES}>
+          <Link to="/" className={LOGO_CLASSES}>
             {APP_NAME}
           </Link>
         </div>
