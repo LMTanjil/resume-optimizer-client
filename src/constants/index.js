@@ -110,6 +110,7 @@ export const VALIDATION_MESSAGES = {
   required: (field) => `${field} is required`,
   email: "Enter a valid email address",
   nameMin: `Name must be at least ${LIMITS.userNameMin} characters`,
+  nameMax: `Name must be at most ${LIMITS.userName} characters`,
   passwordMin: `Password must be at least ${LIMITS.passwordMin} characters`,
   passwordMismatch: "Passwords do not match",
   url: "Enter a valid URL starting with http:// or https://",

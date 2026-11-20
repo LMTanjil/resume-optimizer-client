@@ -15,7 +15,14 @@ import { getDisplayName } from "../utils/user"
 import { validateRegister } from "../utils/validation"
 
 const FIELDS = [
-  { key: "name", label: "Name", type: "text", autoComplete: "name", maxLength: LIMITS.userName },
+  {
+    key: "name",
+    label: "Name",
+    type: "text",
+    autoComplete: "name",
+    placeholder: "Your full name",
+    maxLength: LIMITS.userName,
+  },
   { key: "email", label: "Email", type: "email", autoComplete: "email", maxLength: LIMITS.email },
   { key: "password", label: "Password", type: "password", autoComplete: "new-password" },
   {
@@ -80,13 +87,14 @@ export default function Register() {
       footerTo="/login"
     >
       <form ref={formRef} noValidate onSubmit={onSubmit} className="flex flex-col gap-4">
-        {FIELDS.map(({ key, label, type, autoComplete, maxLength }) => (
+        {FIELDS.map(({ key, label, type, autoComplete, placeholder, maxLength }) => (
           <FormField key={key} id={key} label={label} required error={errors[key]}>
             {(field) => (
               <Input
                 {...field}
                 type={type}
                 autoComplete={autoComplete}
+                placeholder={placeholder}
                 maxLength={maxLength}
                 value={values[key]}
                 onChange={onChange(key)}

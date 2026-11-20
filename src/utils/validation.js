@@ -41,6 +41,7 @@ export function validateRegister({ name, email, password, confirmPassword }) {
   const errors = {}
   if (isBlank(name)) errors.name = MSG.required("Name")
   else if (name.trim().length < LIMITS.userNameMin) errors.name = MSG.nameMin
+  else if (name.trim().length > LIMITS.userName) errors.name = MSG.nameMax
   Object.assign(errors, validateLogin({ email, password }))
   if (confirmPassword !== password) errors.confirmPassword = MSG.passwordMismatch
   return errors
