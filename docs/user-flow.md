@@ -31,7 +31,7 @@ Behavior details are referenced by ID from [functional-requirements.md](function
 flowchart LR
   Root["/ (landing)"] -->|Login| Login["/login"]
   Root -->|Get Started| Register
-  Root -->|Go to dashboard, authed| Dash["/dashboard"]
+  Root -->|Dashboard, authed| Dash["/dashboard"]
   Login <--> Register["/register"]
   Login -->|success| Dash
   Register -->|success| Dash

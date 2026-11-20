@@ -77,7 +77,7 @@ function WaveDivider() {
 export default function Hero() {
   return (
     // Radial gradient: card surface in the middle fading to the page background
-    // (white → cream in light mode, lighter navy → page navy in dark mode).
+    // (white to cream in light mode, lighter navy to page navy in dark mode).
     <section
       aria-labelledby="hero-heading"
       className="relative isolate overflow-hidden bg-bg bg-[radial-gradient(ellipse_at_top,rgb(var(--color-surface)),rgb(var(--color-bg))_70%)]"
@@ -99,12 +99,8 @@ export default function Hero() {
             specific suggestions on what to change before you hit apply.
           </p>
           <div className="flex flex-wrap gap-3">
-            <Button to="/register" variant="primary" className="px-5">
-              {/* inline-flex keeps the arrow on the text's line (preflight makes svg a block) */}
-              <span className="inline-flex items-center gap-2">
-                Get Started Free
-                <ArrowRight size={18} aria-hidden="true" />
-              </span>
+            <Button to="/register" variant="primary" iconRight={ArrowRight} className="px-5">
+              Get Started Free
             </Button>
             <Button href="#how-it-works" variant="secondary" className="px-5">
               See How It Works

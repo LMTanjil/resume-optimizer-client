@@ -23,6 +23,7 @@ const Button = forwardRef(function Button(
     loading = false,
     loadingText,
     icon: Icon,
+    iconRight: IconRight,
     iconOnly = false,
     hideLabelBelowMd = false,
     to,
@@ -45,6 +46,9 @@ const Button = forwardRef(function Button(
           {loading && loadingText ? loadingText : children}
         </span>
       )}
+      {/* Trailing icon as a sibling of the label (inside the label, preflight's svg
+          display:block would push it onto its own line). */}
+      {IconRight && !loading && <IconRight size={18} aria-hidden="true" />}
     </>
   )
 

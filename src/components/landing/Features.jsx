@@ -1,4 +1,4 @@
-import { FileDown, FilePen, Gauge, History, Sparkles, Upload } from "lucide-react"
+import { ArrowRight, FileDown, FilePen, Gauge, History, Sparkles, Upload } from "lucide-react"
 import { EYEBROW, ICON_CHIP, LIFT_ON_HOVER } from "./styles"
 import Reveal from "./Reveal"
 
@@ -62,9 +62,10 @@ export default function Features() {
               {/* Decorative only: not a link, hidden from screen readers. */}
               <span
                 aria-hidden="true"
-                className="cursor-default text-sm font-medium text-text-muted"
+                className="inline-flex cursor-default items-center gap-1 text-sm font-medium text-text-muted"
               >
-                Learn more →
+                Learn more
+                <ArrowRight size={14} />
               </span>
             </li>
           ))}

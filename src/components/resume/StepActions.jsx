@@ -52,9 +52,13 @@ export default function StepActions({
             Save Resume
           </Button>
         ) : (
-          <Button variant="primary" onClick={onNext} disabled={saving || busy}>
+          <Button
+            variant="primary"
+            iconRight={ArrowRight}
+            onClick={onNext}
+            disabled={saving || busy}
+          >
             Next
-            <ArrowRight size={18} aria-hidden="true" />
           </Button>
         )}
       </div>

@@ -1,4 +1,4 @@
-import { Menu, X } from "lucide-react"
+import { LayoutDashboard, Menu, X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import { Link } from "react-router-dom"
 import { APP_NAME } from "../../constants"
@@ -49,8 +49,13 @@ export default function LandingNavbar() {
   // Logged-in visitors get a way back into the app instead of Login / Get Started.
   const actions = (fullWidth) =>
     isAuthenticated ? (
-      <Button to="/dashboard" variant="primary" className={fullWidth ? "w-full" : ""}>
-        Go to dashboard
+      <Button
+        to="/dashboard"
+        variant="secondary"
+        icon={LayoutDashboard}
+        className={fullWidth ? "w-full" : ""}
+      >
+        Dashboard
       </Button>
     ) : (
       <>

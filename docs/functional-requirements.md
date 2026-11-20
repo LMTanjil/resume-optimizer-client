@@ -82,7 +82,7 @@ A logged-in user who visits `/login` or `/register` is redirected to `/dashboard
 
 ### FR-AUTH-08 Root route
 
-`/` is the public landing page for everyone (see [§10](#10-public-site)). Logged-in visitors see "Go to dashboard" in its navbar instead of Login / Get Started.
+`/` is the public landing page for everyone (see [§10](#10-public-site)). Logged-in visitors see a "Dashboard" button in its navbar instead of Login / Get Started.
 
 ---
 
@@ -126,7 +126,7 @@ Authenticated pages use `AppLayout`: a CSS grid with areas `"sidebar navbar" / "
 
 Top navbar: `[☰ (mobile)] [ResumeAI] ····· [ThemeToggle] [avatar ▾]`
 
-- **ResumeAI** links to `/`, the landing page (logged-in visitors see "Go to dashboard" there). The logo in the mobile drawer does the same.
+- **ResumeAI** links to `/`, the landing page (logged-in visitors see a "Dashboard" button there). The logo in the mobile drawer does the same.
 - Below `md`: the hamburger opens the sidebar drawer.
 
 ### FR-NAV-06 Profile dropdown (`common/ProfileDropdown.jsx`)
@@ -586,7 +586,7 @@ Project links (when rendered) open in a new tab with `rel="noopener noreferrer"`
 Uses `LandingLayout` (full width, no sidebar, no auth required). Sections in order:
 
 1. **Navbar:** logo, anchors (How It Works · Features · FAQ), ThemeToggle, Login (secondary) and Get Started (primary, `/register`).
-   - Logged in: a single "Go to dashboard" button replaces Login and Get Started.
+   - Logged in: a single outlined **Dashboard** button (`LayoutDashboard` icon, `/dashboard`) replaces Login and Get Started.
    - Below `md`, the links and buttons collapse into a hamburger menu (Esc closes it).
 2. **Hero:** headline, subheadline, "Get Started Free" (primary, `/register`), "See How It Works" (secondary, `#how-it-works`), and a decorative analysis preview.
 3. **How It Works:** 3 numbered steps with Lucide icons.
