@@ -221,7 +221,7 @@ export default function ResumeStepForm({
 
   return (
     <div ref={containerRef} className="mx-auto flex max-w-3xl flex-col gap-6">
-      <BackLink />
+      <BackLink to="/dashboard/resumes" />
       <h1 className="text-2xl font-bold md:text-3xl">
         {mode === "edit" ? "Edit resume" : "Create resume"}
       </h1>
@@ -253,7 +253,7 @@ export default function ResumeStepForm({
         total={STEPS.length}
         saving={saving}
         busy={importing}
-        onCancel={() => navigate("/dashboard")}
+        onCancel={() => navigate("/dashboard/resumes")}
         onBack={handleBack}
         onNext={handleNext}
         onSave={handleSave}

@@ -44,7 +44,7 @@ flowchart LR
   Edit -->|Save| Resumes
   Analyze -->|Edit resume| Edit
   Analyze -->|Back to dashboard| Dash
-  New & Edit -->|Cancel / Back to dashboard| Dash
+  New & Edit -->|Cancel / Back to dashboard| Resumes
   Dash -->|Logout| Logout["/logout"] --> Login
 ```
 

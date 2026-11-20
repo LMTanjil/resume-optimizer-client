@@ -126,7 +126,7 @@ Authenticated pages use `AppLayout`: a CSS grid with areas `"sidebar navbar" / "
 
 Top navbar: `[☰ (mobile)] [ResumeAI] ····· [ThemeToggle] [avatar ▾]`
 
-- **ResumeAI** links to `/dashboard`.
+- **ResumeAI** links to `/`, the landing page (logged-in visitors see "Go to dashboard" there). The logo in the mobile drawer does the same.
 - Below `md`: the hamburger opens the sidebar drawer.
 
 ### FR-NAV-06 Profile dropdown (`common/ProfileDropdown.jsx`)
@@ -283,7 +283,7 @@ If `getResumes()` fails: an inline error panel (`AlertCircle`, the API or networ
 
 ### FR-BLD-01 Page frame
 
-- A "← Back to dashboard" link at the top. It goes to `/dashboard`, and is protected by [FR-BLD-12](#fr-bld-12-unsaved-changes-protection).
+- A "← Back to dashboard" link at the top. It goes to `/dashboard/resumes` (My Resumes), and is protected by [FR-BLD-12](#fr-bld-12-unsaved-changes-protection).
 - Heading "Create resume" or "Edit resume".
 - `StepIndicator` (6 steps, display only), then the current step form, then the action bar.
 
@@ -312,7 +312,7 @@ Cancel sits at the bottom left. The other buttons sit at the bottom right, in th
 
 In edit mode, **Save Changes** (Steps 1–5) is always the outlined secondary style. Only Step 6 has the filled primary **Save Resume**, which is the same label as in create mode. Both buttons run the same save logic ([FR-BLD-10](#fr-bld-10-edit-mode)).
 
-Cancel goes to `/dashboard` and is protected by [FR-BLD-12](#fr-bld-12-unsaved-changes-protection).
+Cancel goes to `/dashboard/resumes` (My Resumes) in both create and edit mode, and is protected by [FR-BLD-12](#fr-bld-12-unsaved-changes-protection).
 
 ### FR-BLD-04 Step validation
 
