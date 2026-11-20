@@ -4,6 +4,7 @@ import {
   ChevronRight,
   FilePlus,
   FileText,
+  FolderOpen,
   LayoutDashboard,
   X,
 } from "lucide-react"
@@ -24,18 +25,11 @@ export default function Sidebar({
   onCloseMobile,
   closeButtonRef,
 }) {
-  const { pathname, search } = useLocation()
-  const onDashboard = pathname === "/dashboard"
-  const draftsTab = onDashboard && new URLSearchParams(search).get("tab") === "drafts"
+  const { pathname } = useLocation()
 
   const items = [
-    {
-      key: "dashboard",
-      icon: LayoutDashboard,
-      label: "Dashboard",
-      path: "/dashboard",
-      isActive: onDashboard && !draftsTab,
-    },
+    { key: "overview", icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
+    { key: "resumes", icon: FileText, label: "My Resumes", path: "/dashboard/resumes" },
     {
       key: "create",
       icon: FilePlus,
@@ -51,18 +45,12 @@ export default function Sidebar({
     {
       key: "analyze",
       icon: BarChart2,
-      label: "Analyze Resume",
+      label: "Analyze",
       path: "/analyze",
       // Also active on a specific resume's analyze page.
       isActive: pathname === "/analyze" || Boolean(matchPath("/resume/:id/analyze", pathname)),
     },
-    {
-      key: "drafts",
-      icon: FileText,
-      label: "Drafts",
-      path: "/dashboard?tab=drafts",
-      isActive: draftsTab,
-    },
+    { key: "drafts", icon: FolderOpen, label: "Drafts", path: "/dashboard/drafts" },
   ]
 
   const width = collapsed ? "md:w-16" : "md:w-60"

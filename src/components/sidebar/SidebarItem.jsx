@@ -11,7 +11,7 @@ const IDLE = "text-text-muted hover:bg-muted hover:text-text"
 
 /**
  * One sidebar link. NavLink detects the active route. `isActive` overrides that for links
- * whose state depends on more than the pathname (e.g. /dashboard vs /dashboard?tab=drafts).
+ * that should also be active on related routes (e.g. Analyze on /resume/:id/analyze).
  * When collapsed (md and up only), the label stays available to screen readers and as a tooltip.
  */
 export default function SidebarItem({

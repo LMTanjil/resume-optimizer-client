@@ -43,10 +43,9 @@ ro-fontend/
 │   │   │   ├── Skeleton.jsx
 │   │   │   └── Spinner.jsx
 │   │   ├── dashboard/
-│   │   │   ├── DashboardTabs.jsx       # Resumes | Drafts (ARIA tabs)
 │   │   │   ├── DraftsBanner.jsx
 │   │   │   ├── ResumeGrid.jsx          # grid + skeleton + empty state for resumes
-│   │   │   ├── OverviewPanel.jsx       # Overview tab: stats + recent activity + quick actions
+│   │   │   ├── OverviewPanel.jsx       # Overview: stats + recent activity + quick actions
 │   │   │   ├── OverviewStats.jsx       # 3 StatCards + "may be incomplete" note
 │   │   │   ├── StatCard.jsx
 │   │   │   ├── RecentActivity.jsx      # last 5 resumes, compact rows
@@ -54,7 +53,6 @@ ro-fontend/
 │   │   │   ├── DraftList.jsx           # grid + empty state for drafts
 │   │   │   ├── DraftCard.jsx
 │   │   │   ├── EmptyState.jsx
-│   │   │   └── tabIds.js               # DASHBOARD_TABS + tab/panel id helpers
 │   │   ├── resume/
 │   │   │   ├── ResumeCard.jsx
 │   │   │   ├── ResumeStepForm.jsx      # orchestrates steps, validation, save, blocker, draft hookup
@@ -102,7 +100,9 @@ ro-fontend/
 │   │   ├── TermsAndConditions.jsx
 │   │   ├── Login.jsx
 │   │   ├── Register.jsx
-│   │   ├── Dashboard.jsx
+│   │   ├── Dashboard.jsx               # /dashboard (Overview)
+│   │   ├── MyResumes.jsx               # /dashboard/resumes
+│   │   ├── Drafts.jsx                  # /dashboard/drafts
 │   │   ├── ResumeNew.jsx
 │   │   ├── ResumeEdit.jsx
 │   │   ├── Analyze.jsx
@@ -173,7 +173,9 @@ PublicLayout
 ProtectedRoute
 ├── /logout                → Logout      (not lazy)
 └── AppLayout
-    ├── /dashboard         → Dashboard   (lazy)
+    ├── /dashboard         → Dashboard (Overview) (lazy)
+    ├── /dashboard/resumes → MyResumes   (lazy)
+    ├── /dashboard/drafts  → Drafts      (lazy)
     ├── /resume/new        → ResumeNew   (lazy)
     ├── /resume/:id/edit   → ResumeEdit  (lazy)
     ├── /analyze           → AnalyzePicker (lazy)
@@ -192,9 +194,10 @@ AppLayout   (grid areas "sidebar navbar" / "sidebar content"; state: collapsed, 
 ├── Sidebar          props: collapsed, onToggleCollapsed, mobileOpen, onCloseMobile, closeButtonRef
 │   ├── backdrop (mobile, when open)
 │   ├── drawer header: Link "ResumeAI" + close button (mobile only)
-│   ├── SidebarItem × 4  props: icon, label, path, collapsed, isActive?, onClick?
-│   │   Dashboard · Create Resume (on /resume/new: dispatch NEW_RESUME_EVENT) ·
-│   │   Analyze Resume (/analyze) · Drafts (/dashboard?tab=drafts)
+│   ├── SidebarItem × 5  props: icon, label, path, collapsed, isActive?, onClick?
+│   │   Overview (/dashboard) · My Resumes (/dashboard/resumes) ·
+│   │   Create Resume (on /resume/new: dispatch NEW_RESUME_EVENT) ·
+│   │   Analyze (/analyze) · Drafts (/dashboard/drafts)
 │   └── collapse toggle (md and up)
 ├── Navbar variant="authenticated"   props: menuOpen, onOpenMenu, menuButtonRef
 │   ├── Button ghost hamburger (< md) → open drawer
@@ -238,27 +241,35 @@ Login                                   Register
 
 Both use `api.login`/`api.register`, then `useAuth().login`, `useGreeting()` → toast, and `navigate("/dashboard")`.
 
-### Dashboard
+### Dashboard (Overview), My Resumes, Drafts
 
 ```
-Dashboard  (state: resumes, status, activeTab, deleteTarget, deleting; useDrafts(user.id))
-├── header: h1 "Dashboard"
-├── DraftsBanner           (if showBanner)        props: count, onView, onDismiss
-├── DashboardTabs          props: activeTab, onChange, draftCount
-├── [tab = resumes]
-│   ├── ErrorPanel         (if status = error)    props: message, onRetry
-│   └── ResumeGrid         props: resumes, loading, onAnalyze, onEdit, onDelete
-│       ├── Skeleton ×6    (loading)
-│       ├── EmptyState     (empty)                props: message, actionLabel, onAction
-│       └── ResumeCard ×N  props: resume, onAnalyze, onEdit, onDelete
-│           ├── Link (title, stretched → edit)
-│           ├── "Created {relative}"
-│           └── Button Analyze · Button Edit · Button Delete
-├── [tab = drafts]
-│   └── DraftList          props: drafts, onRestore, onDiscard
-│       ├── EmptyState     ("No unsaved drafts.")
-│       └── DraftCard ×N   props: draft, onRestore, onDiscard
-└── ConfirmModal (delete)  props: open, title, body, confirmLabel, variant="destructive", loading, onConfirm, onCancel
+Dashboard (/dashboard)   useResumesWithAnalyses(), useDrafts(user.id)
+├── h1 "Overview"
+├── DraftsBanner           (if showBanner)        props: count, onDismiss  ("View drafts" → /dashboard/drafts)
+└── OverviewPanel          props: resumes, status, loadError, analysesById, analysesStatus, onRetry
+    ├── ErrorPanel         (if status = error)
+    ├── OverviewStats → StatCard ×3
+    ├── RecentActivity     (5 newest, Analyze → /resume/:id/analyze)
+    └── QuickActions       (Create Resume, Import Resume → /resume/new)
+
+MyResumes (/dashboard/resumes)   useResumesWithAnalyses({ withAnalyses: false }); state: deleteTarget, deleting
+├── h1 "My Resumes"
+├── ErrorPanel             (if status = error)    props: message, onRetry
+├── ResumeGrid             props: resumes, loading, onDelete
+│   ├── Skeleton ×6        (loading)
+│   ├── EmptyState         (empty)
+│   └── ResumeCard ×N      props: resume, onDelete
+│       ├── Link (title, stretched → edit)
+│       ├── "Created {relative}"
+│       └── Button Analyze · Button Edit · Button Delete
+└── ConfirmModal (delete)  props: open, title, body, confirmLabel, loading, onConfirm, onCancel
+
+Drafts (/dashboard/drafts)   useDrafts(user.id)
+├── h1 "Drafts"
+└── DraftList              props: drafts, onRestore, onDiscard
+    ├── EmptyState         ("No unsaved drafts.")
+    └── DraftCard ×N       props: draft, onRestore, onDiscard
 ```
 
 ### ResumeNew / ResumeEdit

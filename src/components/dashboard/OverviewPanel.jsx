@@ -4,7 +4,7 @@ import OverviewStats from "./OverviewStats"
 import QuickActions from "./QuickActions"
 import RecentActivity from "./RecentActivity"
 
-// Dashboard Overview tab: stats row, recent activity, quick actions.
+// Overview page content (/dashboard): stats row, recent activity, quick actions.
 export default function OverviewPanel({
   resumes,
   status,

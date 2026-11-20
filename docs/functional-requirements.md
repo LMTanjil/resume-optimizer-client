@@ -148,14 +148,15 @@ Top navbar: `[☰ (mobile)] [ResumeAI] ····· [ThemeToggle] [avatar ▾]`
 
 ### FR-NAV-05 Sidebar
 
-| Item           | Icon            | Goes to                                                                                       |
-| -------------- | --------------- | --------------------------------------------------------------------------------------------- |
-| Dashboard      | LayoutDashboard | `/dashboard`                                                                                  |
-| Create Resume  | FilePlus        | `/resume/new`. If already there, see [FR-BLD-13](#fr-bld-13-new-resume-while-on-the-builder). |
-| Analyze Resume | BarChart2       | `/analyze` (resume picker). Also shown active on `/resume/:id/analyze`.                       |
-| Drafts         | FileText        | `/dashboard?tab=drafts`                                                                       |
+| Item          | Icon            | Goes to                                                                                       |
+| ------------- | --------------- | --------------------------------------------------------------------------------------------- |
+| Overview      | LayoutDashboard | `/dashboard`                                                                                  |
+| My Resumes    | FileText        | `/dashboard/resumes`                                                                          |
+| Create Resume | FilePlus        | `/resume/new`. If already there, see [FR-BLD-13](#fr-bld-13-new-resume-while-on-the-builder). |
+| Analyze       | BarChart2       | `/analyze` (resume picker). Also shown active on `/resume/:id/analyze`.                       |
+| Drafts        | FolderOpen      | `/dashboard/drafts`                                                                           |
 
-- **Active item:** `bg-primary/10 text-primary`. Dashboard and Drafts both live on `/dashboard`, so the `tab` query decides which one is active.
+- **Active item:** `bg-primary/10 text-primary` (label in the normal text color in dark mode). Each item matches its route exactly, so `/dashboard` highlights only Overview. The builder's edit page highlights nothing.
 - **md and up:**
   - 240px expanded (icon + label), 64px collapsed (icon only, label kept for screen readers and as a tooltip);
   - a toggle at the bottom (ChevronLeft / ChevronRight);
@@ -192,22 +193,24 @@ Each route sets `document.title` to `{Page} · ResumeAI`:
 
 ---
 
-## 4. Dashboard (`/dashboard`)
+## 4. Dashboard pages
 
-### FR-DASH-01 Tabs
+### FR-DASH-01 Pages
 
-Three tabs: **Overview** (default) | **My Resumes** | **Drafts**.
+The dashboard is three flat routes in `AppLayout`, reached from the sidebar. There are no tabs and no `?tab=` query.
 
-- The Drafts tab label shows a count when drafts exist ("Drafts (2)").
-- The selected tab lives in the URL: `?tab=resumes` or `?tab=drafts`, and no query (or an unknown value) means Overview. Switching tabs replaces the history entry.
-- The sidebar Drafts item and the banner link both open Drafts.
+| Route                | Page                       | Heading / browser title                |
+| -------------------- | -------------------------- | -------------------------------------- |
+| `/dashboard`         | `Dashboard.jsx` (Overview) | "Overview" / "Overview · ResumeAI"     |
+| `/dashboard/resumes` | `MyResumes.jsx`            | "My Resumes" / "My Resumes · ResumeAI" |
+| `/dashboard/drafts`  | `Drafts.jsx`               | "Drafts" / "Drafts · ResumeAI"         |
 
-### FR-DASH-09 Overview tab
+### FR-DASH-09 Overview (`/dashboard`)
 
 Data comes from `useResumesWithAnalyses`:
 
 - `getResumes()` first, then `getAnalyses(id)` for each resume, at most 4 requests at a time, aggregated on the client.
-- The same hook powers the Analyze picker.
+- The same hook powers the Analyze picker. My Resumes uses it with `{ withAnalyses: false }`, so it makes only the `getResumes()` request.
 
 **Stats row** (3 `bg-surface` cards):
 
@@ -219,7 +222,7 @@ Data comes from `useResumesWithAnalyses`:
 
 - Each value shows a skeleton until its data arrives. Total Resumes appears as soon as the resumes load.
 - If some resumes' analyses fail to load, the stats use the rest and show "Some analyses couldn't be loaded, so these numbers may be incomplete."
-- If `getResumes` fails, the whole tab shows the standard ErrorPanel with Retry.
+- If `getResumes` fails, the page shows the standard ErrorPanel with Retry.
 
 **Recent activity:** the 5 newest resumes as compact rows (title, "Created …", Analyze → `/resume/:id/analyze`), with 3 skeleton rows while loading.
 
@@ -228,7 +231,7 @@ Data comes from `useResumesWithAnalyses`:
 - **Create Resume** (`FilePlus`) → `/resume/new`
 - **Import Resume** (`Upload`) → `/resume/new` (the import button is on the Contact step)
 
-Deleting a resume on My Resumes also removes it and its analyses from the Overview numbers, without refetching.
+Overview reloads its data each time it's opened, so deletes made on My Resumes show up there.
 
 ### FR-DASH-02 Load resumes
 
@@ -259,11 +262,11 @@ If `getResumes()` fails: an inline error panel (`AlertCircle`, the API or networ
 
 ### FR-DASH-07 Drafts banner
 
-- Shown above the tabs when the user has ≥ 1 draft **and** the banner hasn't been dismissed since the newest draft was saved.
-- Text: "You have N unsaved draft(s)." (singular/plural: "1 unsaved draft" / "3 unsaved drafts"). Has a **View drafts** button that switches to the Drafts tab, and a dismiss **X**.
+- Shown on Overview, under the heading, when the user has ≥ 1 draft **and** the banner hasn't been dismissed since the newest draft was saved.
+- Text: "You have N unsaved draft(s)." (singular/plural: "1 unsaved draft" / "3 unsaved drafts"). Has a **View drafts** link-button to `/dashboard/drafts`, and a dismiss **X**.
 - Dismissing hides the banner until a **new draft is saved** (any draft with `savedAt` later than the dismissal time).
 
-### FR-DASH-08 Drafts tab
+### FR-DASH-08 Drafts page (`/dashboard/drafts`)
 
 - Lists drafts as cards in the same grid, sorted by `savedAt` descending.
 - Each card shows the **title** (`data.title` or "Untitled resume"), "Saved {relative date}", **Restore** (primary) and **Discard** (destructive).
@@ -419,7 +422,7 @@ Clicking Navbar **New Resume** while on `/resume/new`:
 
 ### FR-DRAFT-03 Visibility
 
-Drafts appear in the dashboard banner and the Drafts tab ([FR-DASH-07](#fr-dash-07-drafts-banner), [FR-DASH-08](#fr-dash-08-drafts-tab)).
+Drafts appear in the Overview banner and on the Drafts page ([FR-DASH-07](#fr-dash-07-drafts-banner), [FR-DASH-08](#fr-dash-08-drafts-page-dashboarddrafts)).
 
 ### FR-DRAFT-04 Restore draft
 

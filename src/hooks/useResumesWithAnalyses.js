@@ -9,12 +9,13 @@ const byCreatedDesc = (a, b) => new Date(b.created_at) - new Date(a.created_at)
 
 /**
  * Loads the user's resumes (newest first), then each resume's analyses, at most 4 requests at a
- * time. Used by the Dashboard Overview and the Analyze picker.
+ * time. Used by the Overview, My Resumes and the Analyze picker.
+ * Pass { withAnalyses: false } to skip the per-resume analyses requests (My Resumes).
  *
  * analysesById: { [resumeId]: Analysis[] | null }. null means that resume's request failed.
  * A missing key means it hasn't loaded yet.
  */
-export function useResumesWithAnalyses() {
+export function useResumesWithAnalyses({ withAnalyses = true } = {}) {
   const [resumes, setResumes] = useState([])
   const [status, setStatus] = useState("loading") // loading | ready | error
   const [loadError, setLoadError] = useState("")
@@ -44,6 +45,10 @@ export function useResumesWithAnalyses() {
       return
     }
 
+    if (!withAnalyses) {
+      setAnalysesStatus("ready")
+      return
+    }
     const entries = await mapWithConcurrency(list, ANALYSES_CONCURRENCY, async (resume) => {
       try {
         const { data } = await getAnalyses(resume.id)
@@ -55,7 +60,7 @@ export function useResumesWithAnalyses() {
     if (!isCurrent()) return
     setAnalysesById(Object.fromEntries(entries))
     setAnalysesStatus("ready")
-  }, [])
+  }, [withAnalyses])
 
   useEffect(() => {
     load()

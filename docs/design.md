@@ -224,11 +224,11 @@ Use `react-hot-toast` `<Toaster position="top-center" />`, 4 s duration. Styled 
 
 ### 5.11 Banner (`dashboard/DraftsBanner.jsx`)
 
-Full-width strip above the dashboard tabs: `bg-muted border border-border rounded-lg p-4`, a Lucide `FileClock` icon, text, a "View drafts" link-button (secondary) and a dismiss `X` (ghost icon, `aria-label="Dismiss"`).
+Full-width strip under the Overview heading: `bg-muted border border-border rounded-lg p-4`, a Lucide `FileClock` icon, text, a "View drafts" link-button (secondary) and a dismiss `X` (ghost icon, `aria-label="Dismiss"`).
 
-### 5.12 Tabs (`dashboard/DashboardTabs.jsx`)
+### 5.12 Dashboard sections
 
-Underline tabs: active tab `text-text font-semibold` with a 2px `primary` bottom border, inactive `text-text-muted`. The Drafts tab shows a count when > 0 ("Drafts (3)"). Uses the WAI-ARIA tabs pattern.
+There are no dashboard tabs. Overview, My Resumes and Drafts are separate routes, reached from the sidebar (see functional-requirements.md FR-NAV-05).
 
 ---
 

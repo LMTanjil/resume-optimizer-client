@@ -46,8 +46,9 @@ npm run dev
 src/
 ├── components/   common · ui · sidebar · landing · dashboard · resume (+ steps) · analyze
 ├── layouts/      AppLayout (sidebar app), LandingLayout (marketing), PublicLayout (auth + legal)
-├── pages/        Landing, PrivacyPolicy, TermsAndConditions, Login, Register, Dashboard,
-│                 ResumeNew, ResumeEdit, Analyze, AnalyzePicker, Logout, NotFound
+├── pages/        Landing, PrivacyPolicy, TermsAndConditions, Login, Register,
+│                 Dashboard (Overview), MyResumes, Drafts, ResumeNew, ResumeEdit, Analyze,
+│                 AnalyzePicker, Logout, NotFound
 ├── context/      AuthContext (the only context)
 ├── hooks/        useAuth, useResumeForm, useUnsavedChanges, useDrafts, useGreeting, usePageTitle,
 │                 useResumesWithAnalyses

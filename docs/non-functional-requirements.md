@@ -64,7 +64,7 @@ No other runtime dependencies without approval.
   - the background has `inert`.
 - Tag inputs: Enter adds a tag, and each tag's remove button is reachable by Tab.
 - History rows and the history toggle are `<button>`s with `aria-expanded` and `aria-controls`.
-- Dashboard tabs follow the WAI-ARIA Tabs pattern (Left/Right arrow keys, `role="tab"`, `aria-selected`).
+- Sidebar links mark the current page with `aria-current="page"`.
 - Clickable cards use a single real `<a>` (stretched link). Nested buttons stay independently focusable.
 - Minimum target size: 40×40px for icon buttons.
 

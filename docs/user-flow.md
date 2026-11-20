@@ -7,20 +7,22 @@ Behavior details are referenced by ID from [functional-requirements.md](function
 
 ## 1. Route map
 
-| Route                   | Access     | Layout        | Page                                             |
-| ----------------------- | ---------- | ------------- | ------------------------------------------------ |
-| `/`                     | any        | LandingLayout | Landing (marketing page)                         |
-| `/login`                | guest only | PublicLayout  | Login                                            |
-| `/register`             | guest only | PublicLayout  | Register                                         |
-| `/privacy-policy`       | any        | PublicLayout  | PrivacyPolicy                                    |
-| `/terms-and-conditions` | any        | PublicLayout  | TermsAndConditions                               |
-| `/dashboard`            | protected  | AppLayout     | Dashboard (Resumes / Drafts tabs, `?tab=drafts`) |
-| `/resume/new`           | protected  | AppLayout     | ResumeNew                                        |
-| `/resume/:id/edit`      | protected  | AppLayout     | ResumeEdit                                       |
-| `/analyze`              | protected  | AppLayout     | AnalyzePicker (choose a resume)                  |
-| `/resume/:id/analyze`   | protected  | AppLayout     | Analyze                                          |
-| `/logout`               | protected  | —             | Logout (logs out, then `/login`)                 |
-| `*`                     | any        | PublicLayout  | NotFound                                         |
+| Route                   | Access     | Layout        | Page                             |
+| ----------------------- | ---------- | ------------- | -------------------------------- |
+| `/`                     | any        | LandingLayout | Landing (marketing page)         |
+| `/login`                | guest only | PublicLayout  | Login                            |
+| `/register`             | guest only | PublicLayout  | Register                         |
+| `/privacy-policy`       | any        | PublicLayout  | PrivacyPolicy                    |
+| `/terms-and-conditions` | any        | PublicLayout  | TermsAndConditions               |
+| `/dashboard`            | protected  | AppLayout     | Dashboard (Overview)             |
+| `/dashboard/resumes`    | protected  | AppLayout     | MyResumes                        |
+| `/dashboard/drafts`     | protected  | AppLayout     | Drafts                           |
+| `/resume/new`           | protected  | AppLayout     | ResumeNew                        |
+| `/resume/:id/edit`      | protected  | AppLayout     | ResumeEdit                       |
+| `/analyze`              | protected  | AppLayout     | AnalyzePicker (choose a resume)  |
+| `/resume/:id/analyze`   | protected  | AppLayout     | Analyze                          |
+| `/logout`               | protected  | —             | Logout (logs out, then `/login`) |
+| `*`                     | any        | PublicLayout  | NotFound                         |
 
 - **Guest only:** an authenticated user is redirected to `/dashboard`.
 - **Protected:** with no session, the user is redirected to `/login`.
@@ -144,10 +146,10 @@ flowchart LR
 ## 8. Drafts
 
 1. A draft exists after a session expired mid-edit (Section 9).
-2. After logging in, the dashboard shows the banner "You have 1 unsaved draft." with **View drafts** and an **X**.
+2. After logging in, Overview shows the banner "You have 1 unsaved draft." with **View drafts** and an **X**.
    - **X:** the banner hides until another draft is saved.
-   - **View drafts:** switches to the **Drafts** tab.
-3. **Drafts tab:** cards with the title (or "Untitled resume"), "Saved 3 hours ago", **Restore** and **Discard**.
+   - **View drafts:** goes to `/dashboard/drafts`.
+3. **Drafts page:** cards with the title (or "Untitled resume"), "Saved 3 hours ago", **Restore** and **Discard**.
    - **Discard:** the draft is deleted and the toast "Draft discarded." appears.
    - **Restore** (create draft): `/resume/new` loads the draft data at its **saved step**.
    - **Restore** (edit draft): `/resume/:id/edit` checks the resume exists.

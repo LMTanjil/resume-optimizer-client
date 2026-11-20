@@ -14,6 +14,8 @@ const TermsAndConditions = lazy(() => import("./pages/TermsAndConditions"))
 const Login = lazy(() => import("./pages/Login"))
 const Register = lazy(() => import("./pages/Register"))
 const Dashboard = lazy(() => import("./pages/Dashboard"))
+const MyResumes = lazy(() => import("./pages/MyResumes"))
+const Drafts = lazy(() => import("./pages/Drafts"))
 const ResumeNew = lazy(() => import("./pages/ResumeNew"))
 const ResumeEdit = lazy(() => import("./pages/ResumeEdit"))
 const Analyze = lazy(() => import("./pages/Analyze"))
@@ -51,6 +53,8 @@ export const router = createBrowserRouter([
         element: <AppLayout />,
         children: [
           { path: "/dashboard", element: <Dashboard /> },
+          { path: "/dashboard/resumes", element: <MyResumes /> },
+          { path: "/dashboard/drafts", element: <Drafts /> },
           { path: "/resume/new", element: <ResumeNew /> },
           { path: "/resume/:id/edit", element: <ResumeEdit /> },
           { path: "/analyze", element: <AnalyzePicker /> },
