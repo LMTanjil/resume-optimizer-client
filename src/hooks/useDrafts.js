@@ -1,5 +1,5 @@
-import { useCallback, useState } from "react"
-import { DRAFT_TTL_DAYS, MAX_DRAFTS, STORAGE_KEYS } from "../constants"
+import { useCallback, useEffect, useState } from "react"
+import { DRAFTS_CHANGED_EVENT, DRAFT_TTL_DAYS, MAX_DRAFTS, STORAGE_KEYS } from "../constants"
 import { daysSince } from "../utils/dateUtils"
 
 // Drafts are saved only when a session expires mid-edit (docs/state-management.md §6).
@@ -40,8 +40,10 @@ export function readDrafts(userId) {
   return fresh.sort(bySavedAtDesc)
 }
 
+// Writes and notifies every mounted useDrafts instance.
 function writeDrafts(userId, drafts) {
   writeJson(STORAGE_KEYS.drafts(userId), drafts)
+  window.dispatchEvent(new Event(DRAFTS_CHANGED_EVENT))
 }
 
 // Upsert: one draft per resume (edit) or per builder session (create); cap at MAX_DRAFTS.
@@ -66,6 +68,21 @@ export function useDrafts(userId) {
   )
 
   const refresh = useCallback(() => setDrafts(readDrafts(userId)), [userId])
+
+  // Stay in sync with writes from other components (same tab) and other tabs (storage event).
+  useEffect(() => {
+    if (userId == null) return undefined
+    const key = STORAGE_KEYS.drafts(userId)
+    const onStorage = (event) => {
+      if (event.key === key || event.key === null) refresh()
+    }
+    window.addEventListener(DRAFTS_CHANGED_EVENT, refresh)
+    window.addEventListener("storage", onStorage)
+    return () => {
+      window.removeEventListener(DRAFTS_CHANGED_EVENT, refresh)
+      window.removeEventListener("storage", onStorage)
+    }
+  }, [userId, refresh])
 
   const saveDraft = useCallback((draft) => setDrafts(saveDraftFor(userId, draft)), [userId])
 

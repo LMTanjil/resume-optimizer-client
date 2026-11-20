@@ -40,8 +40,8 @@ flowchart LR
   Dash -->|Analyze| Analyze["/resume/:id/analyze"]
   Dash -->|Restore draft| New
   Dash -->|Restore draft| Edit
-  New -->|Save| Dash
-  Edit -->|Save| Dash
+  New -->|Save| Resumes["/dashboard/resumes"]
+  Edit -->|Save| Resumes
   Analyze -->|Edit resume| Edit
   Analyze -->|Back to dashboard| Dash
   New & Edit -->|Cancel / Back to dashboard| Dash
@@ -90,7 +90,7 @@ flowchart LR
 4. **Steps 3, 4 and 6 (array sections):** they start empty. The user clicks "Add …" to add entry cards, and removes entries with the trash icon.
 5. **Step 5 Skills, and Step 6 tech:** type and press Enter (or Add). Duplicates are rejected inline.
 6. **Step 6:** **Save Resume**. The app validates all steps, then calls `createResume`.
-   - **Success:** `/dashboard` + toast "Resume saved successfully." The new card appears first.
+   - **Success:** `/dashboard/resumes` + toast "Resume saved successfully." The new card appears first.
    - **API error:** toast. They stay on Step 6 with their data.
    - **Session expired:** see Section 9.
 7. **Navbar New Resume while already on `/resume/new`:**
@@ -105,7 +105,7 @@ flowchart LR
    - **Other error:** `/dashboard` + toast with the API message.
 3. The form loads pre-filled at **Step 1** (heading "Edit resume").
 4. Navigation is the same as in Section 4. In addition, a save button is on every step: **Save Changes** (outlined) on Steps 1–5 and **Save Resume** (filled) on Step 6.
-   - **All steps valid:** `updateResume`. Success: `/dashboard` + "Resume saved successfully."
+   - **All steps valid:** `updateResume`. Success: `/dashboard/resumes` + "Resume saved successfully."
    - **An earlier step is invalid:** toast "Please complete all required fields", and the form jumps to the first invalid step with its errors shown.
 5. Cancel, Back to dashboard and the other exits behave as in Section 4.
 
@@ -157,7 +157,7 @@ flowchart LR
      - **Gone (404/403):** the draft is deleted, the user goes to `/dashboard`, and the toast "Resume no longer exists." appears.
 4. **In a restored session:**
    - The form counts as dirty from the start.
-   - **Save:** the resume is saved, the draft is deleted, the user goes to `/dashboard` and sees the success toast.
+   - **Save:** the resume is saved, the draft is deleted, the user goes to `/dashboard/resumes` and sees the success toast.
    - **Leaving through the Discard modal** ("Discard this draft?"): confirming deletes the draft.
 5. **Automatic cleanup:**
    - drafts older than 30 days are removed;

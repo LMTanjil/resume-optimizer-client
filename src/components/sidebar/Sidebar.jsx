@@ -10,6 +10,8 @@ import {
 } from "lucide-react"
 import { Link, matchPath, useLocation } from "react-router-dom"
 import { APP_NAME, NEW_RESUME_EVENT, SIDEBAR_ID } from "../../constants"
+import { useAuth } from "../../hooks/useAuth"
+import { useDrafts } from "../../hooks/useDrafts"
 import Button from "../ui/Button"
 import SidebarItem from "./SidebarItem"
 
@@ -26,6 +28,9 @@ export default function Sidebar({
   closeButtonRef,
 }) {
   const { pathname } = useLocation()
+  const { user } = useAuth()
+  const { drafts } = useDrafts(user?.id)
+  const draftCount = drafts.length
 
   const items = [
     { key: "overview", icon: LayoutDashboard, label: "Overview", path: "/dashboard" },
@@ -50,7 +55,14 @@ export default function Sidebar({
       // Also active on a specific resume's analyze page.
       isActive: pathname === "/analyze" || Boolean(matchPath("/resume/:id/analyze", pathname)),
     },
-    { key: "drafts", icon: FolderOpen, label: "Drafts", path: "/dashboard/drafts" },
+    {
+      key: "drafts",
+      icon: FolderOpen,
+      label: "Drafts",
+      path: "/dashboard/drafts",
+      badge: draftCount,
+      badgeLabel: `${draftCount} ${draftCount === 1 ? "draft" : "drafts"}`,
+    },
   ]
 
   const width = collapsed ? "md:w-16" : "md:w-60"

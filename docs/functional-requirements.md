@@ -166,6 +166,9 @@ Top navbar: `[☰ (mobile)] [ResumeAI] ····· [ThemeToggle] [avatar ▾]`
   - Closes on backdrop click, Esc, the close button, or choosing an item.
   - Focus moves to the close button on open and back to the hamburger on close.
   - While it's open, the navbar and content are inert and the page doesn't scroll.
+- **Drafts badge:** the number of drafts in localStorage (`drafts.length` from `useDrafts`), shown as a small `bg-primary` pill with white text at the top-right of the Drafts icon. It is hidden at 0 and shows "99+" above 99.
+  - Screen readers hear "Drafts (2 drafts)". When the sidebar is collapsed, the tooltip reads "Drafts (2)".
+  - It stays live: `useDrafts` writes fire `DRAFTS_CHANGED_EVENT`, and every `useDrafts` instance re-reads (other tabs too, via the `storage` event).
 
 ### FR-NAV-02 Public Navbar
 
@@ -351,7 +354,7 @@ Cancel goes to `/dashboard` and is protected by [FR-BLD-12](#fr-bld-12-unsaved-c
 
 - Initial data: empty resume, with `contact.name` pre-filled from `user.name` (empty if null). The pre-fill does **not** count as an unsaved change.
 - **Save Resume** (Step 6): validate all steps, then `createResume({ title, content })`. While saving: "Saving…" and every action bar button is disabled.
-- Success: clear the dirty state, delete the draft if this session came from one, navigate to `/dashboard`, and show the toast "Resume saved successfully."
+- Success: clear the dirty state, delete the draft if this session came from one, navigate to `/dashboard/resumes`, and show the toast "Resume saved successfully."
 - Failure: stay on the step and show the API error toast.
 
 ### FR-BLD-10 Edit mode

@@ -189,7 +189,7 @@ export default function ResumeStepForm({
       if (activeDraft) deleteDraft(activeDraft.id)
       bypass()
       toast.success(TOAST_MESSAGES.resumeSaved)
-      navigate("/dashboard")
+      navigate("/dashboard/resumes")
     } catch (error) {
       if (shouldShowError(error)) toast.error(getErrorMessage(error))
       setSaving(false)

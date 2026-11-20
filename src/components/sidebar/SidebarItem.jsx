@@ -21,18 +21,37 @@ export default function SidebarItem({
   collapsed = false,
   isActive,
   onClick,
+  badge = 0,
+  badgeLabel,
 }) {
   const classes = (active) =>
     `${BASE} ${collapsed ? "md:justify-center md:px-0" : ""} ${active ? ACTIVE : IDLE}`
 
   const content = (active) => (
     <>
-      <Icon size={20} aria-hidden="true" className={`shrink-0 ${active ? "text-primary" : ""}`} />
-      <span className={collapsed ? "md:sr-only" : "truncate"}>{label}</span>
+      <span className="relative shrink-0">
+        <Icon size={20} aria-hidden="true" className={active ? "text-primary" : undefined} />
+        {badge > 0 && (
+          <span
+            aria-hidden="true"
+            className="absolute -right-2 -top-1.5 flex h-4 min-w-[1rem] items-center justify-center rounded-full bg-primary px-1 text-[10px] font-semibold leading-none text-white"
+          >
+            {badge > 99 ? "99+" : badge}
+          </span>
+        )}
+      </span>
+      <span className={collapsed ? "md:sr-only" : "truncate"}>
+        {label}
+        {badge > 0 && badgeLabel && <span className="sr-only"> ({badgeLabel})</span>}
+      </span>
     </>
   )
 
-  const shared = { to: path, onClick, title: collapsed ? label : undefined }
+  const shared = {
+    to: path,
+    onClick,
+    title: collapsed ? (badge > 0 ? `${label} (${badge})` : label) : undefined,
+  }
 
   if (isActive !== undefined) {
     return (

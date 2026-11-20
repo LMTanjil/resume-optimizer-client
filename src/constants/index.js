@@ -28,6 +28,10 @@ export const LEGAL_LAST_UPDATED = "November 17, 2026"
 // Window event fired by the Navbar when "New Resume" is clicked while already on /resume/new.
 export const NEW_RESUME_EVENT = "resumeai:new-resume"
 
+// Window event fired whenever drafts are written, so every useDrafts instance (e.g. the sidebar
+// badge and the Drafts page) re-reads them.
+export const DRAFTS_CHANGED_EVENT = "resumeai:drafts-changed"
+
 // Profile avatar colors (WCAG AA pairs), picked by hashing the user's email.
 export const AVATAR_COLORS = [
   { bg: "#1565C0", text: "#FFFFFF" }, // blue
