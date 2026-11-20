@@ -1,79 +1,122 @@
-# ResumeAI — Resume Optimizer Client
+# ResumeAI — Frontend
 
-Frontend for ResumeAI. Build resumes with a 6-step builder, analyze them against job descriptions, and export the resume plus its analysis as a PDF.
+React frontend for the ResumeAI application.
 
-## Stack
+## Tech Stack
 
-- Vite 5 + React 18 (plain JavaScript)
-- React Router v6 (`createBrowserRouter`)
-- Tailwind CSS 3.4 (class-based dark mode, CSS-variable color tokens)
-- Axios, jsPDF (loaded on demand), lucide-react, react-hot-toast, date-fns
+- Vite + React 18
+- Tailwind CSS (dark/light mode)
+- React Router v6
+- Axios
+- jsPDF
+- react-hot-toast
+- date-fns
+- Lucide React
 
-## Prerequisites
-
-- Node.js **18+** (see `.nvmrc`)
-- The Resume Optimizer backend running and reachable at `VITE_API_URL`.
-  Registration sends a `name` field. The backend must include the `users.name` change described in [docs/api-contracts.md §2.1](docs/api-contracts.md).
-
-## Setup
-
-```bash
-npm install
-cp .env.example .env   # adjust VITE_API_URL if needed
-npm run dev
-```
-
-## Scripts
-
-| Script                 | What it does                       |
-| ---------------------- | ---------------------------------- |
-| `npm run dev`          | Start the dev server               |
-| `npm run build`        | Production build to `dist/`        |
-| `npm run preview`      | Serve the production build locally |
-| `npm run lint`         | ESLint                             |
-| `npm run format`       | Prettier (write)                   |
-| `npm run format:check` | Prettier (check only)              |
-
-## Environment
-
-| Variable       | Example                     |
-| -------------- | --------------------------- |
-| `VITE_API_URL` | `http://localhost:5000/api` |
-
-## Folder structure
+## Project Structure
 
 ```
 src/
-├── components/   common · ui · sidebar · landing · dashboard · resume (+ steps) · analyze
-├── layouts/      AppLayout (sidebar app), LandingLayout (marketing), PublicLayout (auth + legal)
-├── pages/        Landing, PrivacyPolicy, TermsAndConditions, Login, Register,
-│                 Dashboard (Overview), MyResumes, Drafts, ResumeNew, ResumeEdit, Analyze,
-│                 AnalyzePicker, Logout, NotFound
-├── context/      AuthContext (the only context)
-├── hooks/        useAuth, useResumeForm, useUnsavedChanges, useDrafts, useGreeting, usePageTitle,
-│                 useResumesWithAnalyses
-├── services/     api.js (every backend call)
-├── utils/        validation, resumeData, exportPdf, dateUtils, apiError, authEvents, user, focus,
-│                 stats, async
-├── constants/    limits, messages, steps, storage keys, greetings
-├── router.jsx    route config
-├── App.jsx       RouterProvider + Toaster
-└── main.jsx      ErrorBoundary → AuthProvider → App
+├── components/
+│   ├── common/       # Navbar, ProtectedRoute, ProfileDropdown
+│   ├── dashboard/    # Overview stats, resume grid, drafts list
+│   ├── landing/      # Landing page sections
+│   ├── resume/       # Resume builder components and steps
+│   ├── analyze/      # Analysis result components
+│   ├── sidebar/      # Sidebar and navigation
+│   └── ui/           # Reusable primitives (Button, Input, Modal...)
+├── layouts/          # AppLayout, LandingLayout, PublicLayout
+├── pages/            # Route-level components
+├── context/          # Auth context
+├── hooks/            # Custom hooks
+├── services/         # API calls (api.js)
+├── utils/            # PDF export, validation, date formatting
+└── constants/        # App-wide constants
 ```
 
-Architecture: **Pages → Components → Services (`api.js`) → Backend**. Pages fetch data and own page state. Components get data through props and never call the API.
+## Getting Started
+
+### Prerequisites
+
+- Node.js v18+
+- Backend running at http://localhost:5000
+
+### Setup
+
+1. Clone the repo and install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Copy the example env file:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+3. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+### Scripts
+
+| Script                 | Description                        |
+| ---------------------- | ---------------------------------- |
+| `npm run dev`          | Start the development server       |
+| `npm run build`        | Production build to `dist/`        |
+| `npm run preview`      | Serve the production build locally |
+| `npm run lint`         | Run ESLint                         |
+| `npm run format`       | Format with Prettier               |
+| `npm run format:check` | Check formatting with Prettier     |
+
+## Environment Variables
+
+| Variable       | Description                                           |
+| -------------- | ----------------------------------------------------- |
+| `VITE_API_URL` | Backend API URL (default `http://localhost:5000/api`) |
+
+## Features
+
+- Landing page with hero, about, how it works, features, FAQ and footer
+- Register and login with JWT auth
+- 6-step resume builder (contact, summary, experience, education, skills, projects)
+- Import existing resume from PDF, DOCX or Markdown
+- AI-powered resume analysis with match score, missing keywords, strengths and suggestions
+- Analysis history per resume
+- PDF export of resume and analysis
+- Draft system with localStorage persistence
+- Light and dark mode with system preference detection
+- Responsive layout with collapsible sidebar
+- WCAG 2.1 AA accessible
+
+## Pages
+
+| Route                   | Description                      |
+| ----------------------- | -------------------------------- |
+| `/`                     | Landing page                     |
+| `/login`                | Login                            |
+| `/register`             | Register                         |
+| `/dashboard`            | Overview with stats and activity |
+| `/dashboard/resumes`    | Resume list                      |
+| `/dashboard/drafts`     | Saved drafts                     |
+| `/resume/new`           | Create resume                    |
+| `/resume/:id/edit`      | Edit resume                      |
+| `/resume/:id/analyze`   | Analyze resume                   |
+| `/analyze`              | Pick a resume to analyze         |
+| `/privacy-policy`       | Privacy policy                   |
+| `/terms-and-conditions` | Terms and conditions             |
+
+## Deployment
+
+Recommended:
+
+- Frontend: Vercel
+- Set `VITE_API_URL` to your deployed backend URL
+- Add a rewrite that serves `index.html` for every route, so links like `/dashboard` work on refresh
 
 ## Documentation
 
-All planning docs live in [`docs/`](docs):
-
-- [Functional requirements](docs/functional-requirements.md)
-- [Non-functional requirements](docs/non-functional-requirements.md)
-- [Design system](docs/design.md)
-- [User flow](docs/user-flow.md)
-- [Component tree](docs/component-tree.md)
-- [API contracts](docs/api-contracts.md)
-- [State management](docs/state-management.md)
-- [Error handling](docs/error-handling.md)
-- [Greeting messages](docs/greeting-messages.md)
-- [Original spec](docs/resume-optimizer-frontend-spec.md)
+Planning docs live in [`docs/`](docs): functional and non-functional requirements, design system, user flow, component tree, API contracts, state management and error handling.
