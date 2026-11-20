@@ -124,19 +124,36 @@ A logged-in user who visits `/login` or `/register` is redirected to `/dashboard
 
 Authenticated pages use `AppLayout`: a CSS grid with areas `"sidebar navbar" / "sidebar content"`, columns `auto 1fr`, rows `auto 1fr`.
 
-Top navbar: `[☰ (mobile)] [ResumeAI] ····· [ThemeToggle] [user email] [Logout]`
+Top navbar: `[☰ (mobile)] [ResumeAI] ····· [ThemeToggle] [avatar ▾]`
 
 - **ResumeAI** links to `/dashboard`.
-- Below `md`: the email is hidden, Logout is icon-only, and the hamburger opens the sidebar drawer.
+- Below `md`: the hamburger opens the sidebar drawer.
+
+### FR-NAV-06 Profile dropdown (`common/ProfileDropdown.jsx`)
+
+- **Avatar:** a 36px circle showing the first letter of `user.name`, or of the email when there's no name.
+  - Its colors come from hashing the email into one of 8 WCAG AA pairs (`AVATAR_COLORS`), so the same email always gets the same color.
+  - The button has `aria-haspopup="menu"`, `aria-expanded` and the label "Account menu for {name}".
+- **Menu** (below the avatar, right-aligned):
+  - a header with the name (bold) and email (muted), not interactive;
+  - a divider;
+  - **Settings** (`Settings` icon): a "Coming soon" toast;
+  - a divider;
+  - **Logout** (`LogOut` icon, warning color): `navigate("/logout")`, so the unsaved-changes blocker still applies.
+- **Keyboard:**
+  - on open, focus goes to the first item;
+  - Tab / Shift+Tab / ArrowUp / ArrowDown / Home / End move between the items and stay inside the menu;
+  - Esc closes it and returns focus to the avatar.
+- **Clicking outside** closes it. Focus returns to the avatar unless the click landed on something focusable.
 
 ### FR-NAV-05 Sidebar
 
-| Item           | Icon            | Goes to                                                                                                                                     |
-| -------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| Dashboard      | LayoutDashboard | `/dashboard`                                                                                                                                |
-| Create Resume  | FilePlus        | `/resume/new`. If already there, see [FR-BLD-13](#fr-bld-13-new-resume-while-on-the-builder).                                               |
-| Analyze Resume | BarChart2       | `/resume/:id/analyze` when the URL has a resume id (edit or analyze page). Otherwise a toast "Select a resume to analyze" and `/dashboard`. |
-| Drafts         | FileText        | `/dashboard?tab=drafts`                                                                                                                     |
+| Item           | Icon            | Goes to                                                                                       |
+| -------------- | --------------- | --------------------------------------------------------------------------------------------- |
+| Dashboard      | LayoutDashboard | `/dashboard`                                                                                  |
+| Create Resume  | FilePlus        | `/resume/new`. If already there, see [FR-BLD-13](#fr-bld-13-new-resume-while-on-the-builder). |
+| Analyze Resume | BarChart2       | `/analyze` (resume picker). Also shown active on `/resume/:id/analyze`.                       |
+| Drafts         | FileText        | `/dashboard?tab=drafts`                                                                       |
 
 - **Active item:** `bg-primary/10 text-primary`. Dashboard and Drafts both live on `/dashboard`, so the `tab` query decides which one is active.
 - **md and up:**
@@ -179,7 +196,39 @@ Each route sets `document.title` to `{Page} · ResumeAI`:
 
 ### FR-DASH-01 Tabs
 
-Two tabs: **Resumes** (default) and **Drafts**. The Drafts tab label shows a count when drafts exist ("Drafts (2)"). The selected tab lives in the URL: `?tab=drafts` opens Drafts, and no query means Resumes. Switching tabs replaces the history entry. The sidebar Drafts item and the banner link both open Drafts.
+Three tabs: **Overview** (default) | **My Resumes** | **Drafts**.
+
+- The Drafts tab label shows a count when drafts exist ("Drafts (2)").
+- The selected tab lives in the URL: `?tab=resumes` or `?tab=drafts`, and no query (or an unknown value) means Overview. Switching tabs replaces the history entry.
+- The sidebar Drafts item and the banner link both open Drafts.
+
+### FR-DASH-09 Overview tab
+
+Data comes from `useResumesWithAnalyses`:
+
+- `getResumes()` first, then `getAnalyses(id)` for each resume, at most 4 requests at a time, aggregated on the client.
+- The same hook powers the Analyze picker.
+
+**Stats row** (3 `bg-surface` cards):
+
+| Card                | Value                                                                          |
+| ------------------- | ------------------------------------------------------------------------------ |
+| Total Resumes       | number of resumes                                                              |
+| Total Analyses Run  | number of analyses across all resumes                                          |
+| Average Match Score | mean of all `match_score` values, rounded, as `NN%`; "N/A" when there are none |
+
+- Each value shows a skeleton until its data arrives. Total Resumes appears as soon as the resumes load.
+- If some resumes' analyses fail to load, the stats use the rest and show "Some analyses couldn't be loaded, so these numbers may be incomplete."
+- If `getResumes` fails, the whole tab shows the standard ErrorPanel with Retry.
+
+**Recent activity:** the 5 newest resumes as compact rows (title, "Created …", Analyze → `/resume/:id/analyze`), with 3 skeleton rows while loading.
+
+**Quick actions:** two link cards.
+
+- **Create Resume** (`FilePlus`) → `/resume/new`
+- **Import Resume** (`Upload`) → `/resume/new` (the import button is on the Contact step)
+
+Deleting a resume on My Resumes also removes it and its analyses from the Overview numbers, without refetching.
 
 ### FR-DASH-02 Load resumes
 
@@ -464,6 +513,18 @@ Shown when `current` exists. Otherwise the section shows the muted text "No anal
 ### FR-AN-07 Incomplete resumes
 
 Analysis is allowed for any resume, however empty. There is no warning.
+
+---
+
+### FR-AN-08 Analyze picker (`/analyze`)
+
+- Heading "Select a resume to analyze", plus a short subtitle.
+- One card per resume (same grid as the dashboard), each showing:
+  - the title;
+  - "Created …";
+  - "Last analyzed …", "Never analyzed", or "Last analyzed: unavailable" if its analyses failed to load (a skeleton line while loading);
+  - a primary **Analyze** button → `/resume/:id/analyze`. Its link is stretched over the card, so the whole card is clickable with one tab stop.
+- While loading: 6 skeleton cards. With no resumes: the empty state "You have no resumes yet." with a **Create Resume** button. If loading fails: ErrorPanel with Retry.
 
 ---
 

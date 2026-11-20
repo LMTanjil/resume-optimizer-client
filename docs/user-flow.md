@@ -17,6 +17,7 @@ Behavior details are referenced by ID from [functional-requirements.md](function
 | `/dashboard`            | protected  | AppLayout     | Dashboard (Resumes / Drafts tabs, `?tab=drafts`) |
 | `/resume/new`           | protected  | AppLayout     | ResumeNew                                        |
 | `/resume/:id/edit`      | protected  | AppLayout     | ResumeEdit                                       |
+| `/analyze`              | protected  | AppLayout     | AnalyzePicker (choose a resume)                  |
 | `/resume/:id/analyze`   | protected  | AppLayout     | Analyze                                          |
 | `/logout`               | protected  | —             | Logout (logs out, then `/login`)                 |
 | `*`                     | any        | PublicLayout  | NotFound                                         |

@@ -17,6 +17,7 @@ const Dashboard = lazy(() => import("./pages/Dashboard"))
 const ResumeNew = lazy(() => import("./pages/ResumeNew"))
 const ResumeEdit = lazy(() => import("./pages/ResumeEdit"))
 const Analyze = lazy(() => import("./pages/Analyze"))
+const AnalyzePicker = lazy(() => import("./pages/AnalyzePicker"))
 const NotFound = lazy(() => import("./pages/NotFound"))
 
 export const router = createBrowserRouter([
@@ -52,6 +53,7 @@ export const router = createBrowserRouter([
           { path: "/dashboard", element: <Dashboard /> },
           { path: "/resume/new", element: <ResumeNew /> },
           { path: "/resume/:id/edit", element: <ResumeEdit /> },
+          { path: "/analyze", element: <AnalyzePicker /> },
           { path: "/resume/:id/analyze", element: <Analyze /> },
         ],
       },

@@ -1,10 +1,5 @@
 import { useRef } from "react"
-import { panelId, tabId } from "./tabIds"
-
-const TABS = [
-  { key: "resumes", label: "Resumes" },
-  { key: "drafts", label: "Drafts" },
-]
+import { DASHBOARD_TABS as TABS, panelId, tabId } from "./tabIds"
 
 // WAI-ARIA tabs: arrow keys move between tabs, only the active tab is in the tab order.
 export default function DashboardTabs({ activeTab, onChange, draftCount }) {
@@ -42,7 +37,7 @@ export default function DashboardTabs({ activeTab, onChange, draftCount }) {
             tabIndex={selected ? 0 : -1}
             onClick={() => onChange(tab.key)}
             onKeyDown={onKeyDown}
-            className={`-mb-px border-b-2 px-1 pb-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
+            className={`-mb-px shrink-0 whitespace-nowrap border-b-2 px-1 pb-3 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent ${
               selected
                 ? "border-primary font-semibold text-text"
                 : "border-transparent text-text-muted hover:text-text"

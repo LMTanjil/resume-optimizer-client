@@ -7,18 +7,10 @@ import {
   LayoutDashboard,
   X,
 } from "lucide-react"
-import toast from "react-hot-toast"
-import { Link, matchPath, useLocation, useNavigate } from "react-router-dom"
-import { APP_NAME, NEW_RESUME_EVENT, SIDEBAR_ID, TOAST_MESSAGES } from "../../constants"
+import { Link, matchPath, useLocation } from "react-router-dom"
+import { APP_NAME, NEW_RESUME_EVENT, SIDEBAR_ID } from "../../constants"
 import Button from "../ui/Button"
 import SidebarItem from "./SidebarItem"
-
-// The resume id in the current URL, if the user is on one resume's edit or analyze page.
-function currentResumeId(pathname) {
-  const match =
-    matchPath("/resume/:id/edit", pathname) ?? matchPath("/resume/:id/analyze", pathname)
-  return match?.params.id ?? null
-}
 
 /**
  * App navigation (docs/component-tree.md).
@@ -32,11 +24,9 @@ export default function Sidebar({
   onCloseMobile,
   closeButtonRef,
 }) {
-  const navigate = useNavigate()
   const { pathname, search } = useLocation()
   const onDashboard = pathname === "/dashboard"
   const draftsTab = onDashboard && new URLSearchParams(search).get("tab") === "drafts"
-  const resumeId = currentResumeId(pathname)
 
   const items = [
     {
@@ -58,25 +48,14 @@ export default function Sidebar({
         window.dispatchEvent(new Event(NEW_RESUME_EVENT))
       },
     },
-    resumeId
-      ? {
-          key: "analyze",
-          icon: BarChart2,
-          label: "Analyze Resume",
-          path: `/resume/${resumeId}/analyze`,
-        }
-      : {
-          key: "analyze",
-          icon: BarChart2,
-          label: "Analyze Resume",
-          path: "/dashboard",
-          isActive: false,
-          onClick: (event) => {
-            event.preventDefault()
-            toast(TOAST_MESSAGES.selectResumeToAnalyze, { id: "select-resume" })
-            if (!onDashboard || draftsTab) navigate("/dashboard")
-          },
-        },
+    {
+      key: "analyze",
+      icon: BarChart2,
+      label: "Analyze Resume",
+      path: "/analyze",
+      // Also active on a specific resume's analyze page.
+      isActive: pathname === "/analyze" || Boolean(matchPath("/resume/:id/analyze", pathname)),
+    },
     {
       key: "drafts",
       icon: FileText,

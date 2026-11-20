@@ -47,11 +47,13 @@ src/
 ├── components/   common · ui · sidebar · landing · dashboard · resume (+ steps) · analyze
 ├── layouts/      AppLayout (sidebar app), LandingLayout (marketing), PublicLayout (auth + legal)
 ├── pages/        Landing, PrivacyPolicy, TermsAndConditions, Login, Register, Dashboard,
-│                 ResumeNew, ResumeEdit, Analyze, Logout, NotFound
+│                 ResumeNew, ResumeEdit, Analyze, AnalyzePicker, Logout, NotFound
 ├── context/      AuthContext (the only context)
-├── hooks/        useAuth, useResumeForm, useUnsavedChanges, useDrafts, useGreeting, usePageTitle
+├── hooks/        useAuth, useResumeForm, useUnsavedChanges, useDrafts, useGreeting, usePageTitle,
+│                 useResumesWithAnalyses
 ├── services/     api.js (every backend call)
-├── utils/        validation, resumeData, exportPdf, dateUtils, apiError, authEvents, user, focus
+├── utils/        validation, resumeData, exportPdf, dateUtils, apiError, authEvents, user, focus,
+│                 stats, async
 ├── constants/    limits, messages, steps, storage keys, greetings
 ├── router.jsx    route config
 ├── App.jsx       RouterProvider + Toaster

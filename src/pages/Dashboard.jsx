@@ -1,21 +1,23 @@
-import { useCallback, useEffect, useState } from "react"
+import { useState } from "react"
 import toast from "react-hot-toast"
 import { useNavigate, useSearchParams } from "react-router-dom"
 import ConfirmModal from "../components/common/ConfirmModal"
 import ErrorPanel from "../components/common/ErrorPanel"
 import DashboardTabs from "../components/dashboard/DashboardTabs"
-import { panelId, tabId } from "../components/dashboard/tabIds"
 import DraftList from "../components/dashboard/DraftList"
 import DraftsBanner from "../components/dashboard/DraftsBanner"
+import OverviewPanel from "../components/dashboard/OverviewPanel"
 import ResumeGrid from "../components/dashboard/ResumeGrid"
+import { DASHBOARD_TABS, panelId, tabId } from "../components/dashboard/tabIds"
 import { TOAST_MESSAGES } from "../constants"
 import { useAuth } from "../hooks/useAuth"
 import { useDrafts } from "../hooks/useDrafts"
 import { usePageTitle } from "../hooks/usePageTitle"
-import { deleteResume, getResumes } from "../services/api"
+import { useResumesWithAnalyses } from "../hooks/useResumesWithAnalyses"
+import { deleteResume } from "../services/api"
 import { getErrorMessage, shouldShowError } from "../utils/apiError"
 
-const byCreatedDesc = (a, b) => new Date(b.created_at) - new Date(a.created_at)
+const DEFAULT_TAB = "overview"
 
 export default function Dashboard() {
   usePageTitle("Dashboard")
@@ -24,47 +26,25 @@ export default function Dashboard() {
   const { drafts, deleteDraft, deleteDraftForResume, showBanner, dismissBanner } = useDrafts(
     user?.id
   )
+  const { resumes, status, loadError, analysesById, analysesStatus, reload, removeResume } =
+    useResumesWithAnalyses()
 
-  // The tab lives in the URL so the sidebar's Drafts link (/dashboard?tab=drafts) can open it.
+  // The tab lives in the URL (?tab=resumes | drafts) so the sidebar's Drafts link can open it.
   const [searchParams, setSearchParams] = useSearchParams()
-  const activeTab = searchParams.get("tab") === "drafts" ? "drafts" : "resumes"
+  const requested = searchParams.get("tab")
+  const activeTab = DASHBOARD_TABS.some((tab) => tab.key === requested) ? requested : DEFAULT_TAB
   const setActiveTab = (tab) =>
-    setSearchParams(tab === "drafts" ? { tab: "drafts" } : {}, { replace: true })
-  const [resumes, setResumes] = useState([])
-  const [status, setStatus] = useState("loading") // loading | ready | error
-  const [loadError, setLoadError] = useState("")
+    setSearchParams(tab === DEFAULT_TAB ? {} : { tab }, { replace: true })
+
   const [deleteTarget, setDeleteTarget] = useState(null)
   const [deleting, setDeleting] = useState(false)
-
-  const loadResumes = useCallback(async (isActive = () => true) => {
-    setStatus("loading")
-    try {
-      const { data } = await getResumes()
-      if (!isActive()) return
-      setResumes([...(Array.isArray(data) ? data : [])].sort(byCreatedDesc))
-      setStatus("ready")
-    } catch (error) {
-      if (!isActive()) return
-      setLoadError(getErrorMessage(error))
-      setStatus("error")
-      if (shouldShowError(error)) toast.error(getErrorMessage(error))
-    }
-  }, [])
-
-  useEffect(() => {
-    let active = true
-    loadResumes(() => active)
-    return () => {
-      active = false
-    }
-  }, [loadResumes])
 
   const confirmDelete = async () => {
     const target = deleteTarget
     setDeleting(true)
     try {
       await deleteResume(target.id)
-      setResumes((list) => list.filter((resume) => resume.id !== target.id))
+      removeResume(target.id)
       deleteDraftForResume(target.id)
       toast.success(TOAST_MESSAGES.resumeDeleted)
     } catch (error) {
@@ -83,6 +63,26 @@ export default function Dashboard() {
   const discardDraft = (draft) => {
     deleteDraft(draft.id)
     toast.success(TOAST_MESSAGES.draftDiscarded)
+  }
+
+  const panels = {
+    overview: (
+      <OverviewPanel
+        resumes={resumes}
+        status={status}
+        loadError={loadError}
+        analysesById={analysesById}
+        analysesStatus={analysesStatus}
+        onRetry={reload}
+      />
+    ),
+    resumes:
+      status === "error" ? (
+        <ErrorPanel message={loadError} onRetry={reload} />
+      ) : (
+        <ResumeGrid resumes={resumes} loading={status === "loading"} onDelete={setDeleteTarget} />
+      ),
+    drafts: <DraftList drafts={drafts} onRestore={restoreDraft} onDiscard={discardDraft} />,
   }
 
   return (
@@ -106,19 +106,7 @@ export default function Dashboard() {
         tabIndex={0}
         className="focus:outline-none"
       >
-        {activeTab === "resumes" ? (
-          status === "error" ? (
-            <ErrorPanel message={loadError} onRetry={() => loadResumes()} />
-          ) : (
-            <ResumeGrid
-              resumes={resumes}
-              loading={status === "loading"}
-              onDelete={setDeleteTarget}
-            />
-          )
-        ) : (
-          <DraftList drafts={drafts} onRestore={restoreDraft} onDiscard={discardDraft} />
-        )}
+        {panels[activeTab]}
       </div>
 
       <ConfirmModal

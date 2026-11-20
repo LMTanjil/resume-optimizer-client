@@ -208,9 +208,10 @@ Centered panel `max-w-md w-[calc(100%-2rem)] bg-surface rounded-lg p-6`. Title `
 ### 5.8 Navbar (`common/Navbar.jsx`)
 
 - `h-16 bg-surface border-b border-border`, content inside the 1280px container.
-- **Authenticated:** `[ResumeAI] ····· [ThemeToggle] [email] [New Resume] [Logout]`
-  - New Resume is **secondary** (outlined) and Logout is **ghost**. The Navbar never has a filled primary button, so it doesn't compete with the page's primary action.
-  - Below `md`: the email is hidden, and New Resume and Logout become icon-only (Lucide `Plus`, `LogOut`) with aria-labels "New resume" and "Log out".
+- **Authenticated** (inside `AppLayout`): `[☰ mobile] [ResumeAI] ····· [ThemeToggle] [avatar]`
+  - Navigation lives in the sidebar. Logout is in the avatar's profile menu, in warning red.
+  - Avatar: a 36px circle with the user's initial on one of 8 fixed WCAG AA color pairs, chosen by hashing the email.
+  - The Navbar never has a filled primary button, so it doesn't compete with the page's primary action.
 - **Public:** `[ResumeAI] ····· [ThemeToggle]`.
 
 ### 5.9 Skeletons (`ui/Skeleton.jsx`)

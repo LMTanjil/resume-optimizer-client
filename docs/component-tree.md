@@ -46,10 +46,15 @@ ro-fontend/
 │   │   │   ├── DashboardTabs.jsx       # Resumes | Drafts (ARIA tabs)
 │   │   │   ├── DraftsBanner.jsx
 │   │   │   ├── ResumeGrid.jsx          # grid + skeleton + empty state for resumes
+│   │   │   ├── OverviewPanel.jsx       # Overview tab: stats + recent activity + quick actions
+│   │   │   ├── OverviewStats.jsx       # 3 StatCards + "may be incomplete" note
+│   │   │   ├── StatCard.jsx
+│   │   │   ├── RecentActivity.jsx      # last 5 resumes, compact rows
+│   │   │   ├── QuickActions.jsx        # Create Resume / Import Resume link cards
 │   │   │   ├── DraftList.jsx           # grid + empty state for drafts
 │   │   │   ├── DraftCard.jsx
 │   │   │   ├── EmptyState.jsx
-│   │   │   └── tabIds.js               # shared tab/panel id helpers
+│   │   │   └── tabIds.js               # DASHBOARD_TABS + tab/panel id helpers
 │   │   ├── resume/
 │   │   │   ├── ResumeCard.jsx
 │   │   │   ├── ResumeStepForm.jsx      # orchestrates steps, validation, save, blocker, draft hookup
@@ -85,7 +90,8 @@ ro-fontend/
 │   │       ├── AnalysisDetails.jsx     # keywords + strengths + suggestions (result and history rows)
 │   │       ├── scoreColor.js           # score → color class, clamp
 │   │       ├── AnalysisHistory.jsx
-│   │       └── AnalysisHistoryRow.jsx
+│   │       ├── AnalysisHistoryRow.jsx
+│   │       └── ResumePickerCard.jsx    # /analyze card: created, last analyzed, Analyze
 │   ├── layouts/
 │   │   ├── AppLayout.jsx               # grid: Sidebar | Navbar(authenticated) / <main><Outlet/>
 │   │   ├── LandingLayout.jsx           # LandingNavbar + <main><Outlet/> + Footer
@@ -100,6 +106,7 @@ ro-fontend/
 │   │   ├── ResumeNew.jsx
 │   │   ├── ResumeEdit.jsx
 │   │   ├── Analyze.jsx
+│   │   ├── AnalyzePicker.jsx           # /analyze
 │   │   ├── Logout.jsx
 │   │   └── NotFound.jsx
 │   ├── context/
@@ -169,6 +176,7 @@ ProtectedRoute
     ├── /dashboard         → Dashboard   (lazy)
     ├── /resume/new        → ResumeNew   (lazy)
     ├── /resume/:id/edit   → ResumeEdit  (lazy)
+    ├── /analyze           → AnalyzePicker (lazy)
     └── /resume/:id/analyze→ Analyze     (lazy)
 ```
 
@@ -186,14 +194,13 @@ AppLayout   (grid areas "sidebar navbar" / "sidebar content"; state: collapsed, 
 │   ├── drawer header: Link "ResumeAI" + close button (mobile only)
 │   ├── SidebarItem × 4  props: icon, label, path, collapsed, isActive?, onClick?
 │   │   Dashboard · Create Resume (on /resume/new: dispatch NEW_RESUME_EVENT) ·
-│   │   Analyze Resume (id from URL, else toast + /dashboard) · Drafts (/dashboard?tab=drafts)
+│   │   Analyze Resume (/analyze) · Drafts (/dashboard?tab=drafts)
 │   └── collapse toggle (md and up)
 ├── Navbar variant="authenticated"   props: menuOpen, onOpenMenu, menuButtonRef
 │   ├── Button ghost hamburger (< md) → open drawer
 │   ├── Link "ResumeAI" → /dashboard
 │   ├── ThemeToggle
-│   ├── <span> user email (hidden < md)
-│   └── Button ghost "Logout" (iconOnly < md)          → navigate("/logout")
+│   └── ProfileDropdown   avatar → menu: name/email · Settings (toast) · Logout (/logout)
 └── <main id="main"> container (max-w-content)
     └── Outlet
 

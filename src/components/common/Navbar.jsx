@@ -1,8 +1,8 @@
-import { LogOut, Menu } from "lucide-react"
-import { Link, useNavigate } from "react-router-dom"
+import { Menu } from "lucide-react"
+import { Link } from "react-router-dom"
 import { APP_NAME, SIDEBAR_ID } from "../../constants"
-import { useAuth } from "../../hooks/useAuth"
 import Button from "../ui/Button"
+import ProfileDropdown from "./ProfileDropdown"
 import ThemeToggle from "./ThemeToggle"
 
 const LOGO_CLASSES =
@@ -12,7 +12,7 @@ const LOGO_CLASSES =
 /**
  * variant "public": logo + theme toggle (login, register, legal pages, 404).
  * variant "authenticated": the AppLayout top bar — hamburger (mobile), logo, theme toggle,
- * email (md and up), Logout. Navigation lives in the Sidebar.
+ * profile avatar menu (name, email, Settings, Logout). Navigation lives in the Sidebar.
  */
 export default function Navbar({
   variant = "public",
@@ -20,8 +20,6 @@ export default function Navbar({
   onOpenMenu,
   menuButtonRef,
 }) {
-  const { user } = useAuth()
-  const navigate = useNavigate()
   const isAuthed = variant === "authenticated"
 
   return (
@@ -51,24 +49,7 @@ export default function Navbar({
 
         <div className="flex items-center gap-1 md:gap-3">
           <ThemeToggle />
-          {isAuthed && (
-            <>
-              <span
-                className="hidden max-w-[16rem] truncate text-sm text-text-muted md:inline"
-                title={user?.email}
-              >
-                {user?.email}
-              </span>
-              <Button
-                variant="ghost"
-                icon={LogOut}
-                hideLabelBelowMd
-                onClick={() => navigate("/logout")}
-              >
-                Logout
-              </Button>
-            </>
-          )}
+          {isAuthed && <ProfileDropdown />}
         </div>
       </nav>
     </header>

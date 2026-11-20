@@ -28,6 +28,18 @@ export const LEGAL_LAST_UPDATED = "November 17, 2026"
 // Window event fired by the Navbar when "New Resume" is clicked while already on /resume/new.
 export const NEW_RESUME_EVENT = "resumeai:new-resume"
 
+// Profile avatar colors (WCAG AA pairs), picked by hashing the user's email.
+export const AVATAR_COLORS = [
+  { bg: "#1565C0", text: "#FFFFFF" }, // blue
+  { bg: "#2E7D32", text: "#FFFFFF" }, // green
+  { bg: "#6A1B9A", text: "#FFFFFF" }, // purple
+  { bg: "#E65100", text: "#FFFFFF" }, // orange
+  { bg: "#00695C", text: "#FFFFFF" }, // teal
+  { bg: "#AD1457", text: "#FFFFFF" }, // pink
+  { bg: "#4527A0", text: "#FFFFFF" }, // deep purple
+  { bg: "#283593", text: "#FFFFFF" }, // indigo
+]
+
 // id of the app sidebar, referenced by the navbar hamburger and the collapse toggle.
 export const SIDEBAR_ID = "app-sidebar"
 
@@ -87,7 +99,7 @@ export const TOAST_MESSAGES = {
   pdfFailed: "Couldn't generate the PDF. Please try again.",
   resumeImported: "Resume imported — review and edit your details",
   importEmpty: "We couldn't find any resume details in that file.",
-  selectResumeToAnalyze: "Select a resume to analyze",
+  comingSoon: "Coming soon",
 }
 
 export const VALIDATION_MESSAGES = {
