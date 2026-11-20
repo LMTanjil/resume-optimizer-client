@@ -1,23 +1,22 @@
 import { Suspense } from "react"
 import { Outlet } from "react-router-dom"
-import Navbar from "../components/common/Navbar"
 import SkipLink from "../components/common/SkipLink"
+import Footer from "../components/landing/Footer"
+import LandingNavbar from "../components/landing/LandingNavbar"
 import Spinner from "../components/ui/Spinner"
 
-export default function AuthLayout() {
+// Full-width public marketing layout: no sidebar, no auth required.
+export default function LandingLayout() {
   return (
     <div className="flex min-h-screen flex-col">
       <SkipLink />
-      <Navbar variant="authenticated" />
-      <main
-        id="main"
-        tabIndex={-1}
-        className="mx-auto w-full max-w-content flex-1 px-4 py-6 focus:outline-none md:px-6 md:py-8 lg:px-8"
-      >
+      <LandingNavbar />
+      <main id="main" tabIndex={-1} className="flex-1 focus:outline-none">
         <Suspense fallback={<Spinner page />}>
           <Outlet />
         </Suspense>
       </main>
+      <Footer />
     </div>
   )
 }

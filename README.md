@@ -44,9 +44,10 @@ npm run dev
 
 ```
 src/
-├── components/   common · ui · dashboard · resume (+ steps) · analyze
-├── layouts/      AuthLayout, PublicLayout
-├── pages/        Login, Register, Dashboard, ResumeNew, ResumeEdit, Analyze, Logout, NotFound
+├── components/   common · ui · sidebar · landing · dashboard · resume (+ steps) · analyze
+├── layouts/      AppLayout (sidebar app), LandingLayout (marketing), PublicLayout (auth + legal)
+├── pages/        Landing, PrivacyPolicy, TermsAndConditions, Login, Register, Dashboard,
+│                 ResumeNew, ResumeEdit, Analyze, Logout, NotFound
 ├── context/      AuthContext (the only context)
 ├── hooks/        useAuth, useResumeForm, useUnsavedChanges, useDrafts, useGreeting, usePageTitle
 ├── services/     api.js (every backend call)

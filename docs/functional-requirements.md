@@ -82,7 +82,7 @@ A logged-in user who visits `/login` or `/register` is redirected to `/dashboard
 
 ### FR-AUTH-08 Root route
 
-`/` redirects (replace) to `/dashboard` if authenticated, otherwise to `/login`.
+`/` is the public landing page for everyone (see [§10](#10-public-site)). Logged-in visitors see "Go to dashboard" in its navbar instead of Login / Get Started.
 
 ---
 
@@ -120,17 +120,38 @@ A logged-in user who visits `/login` or `/register` is redirected to `/dashboard
 
 ## 3. Navbar and layout
 
-### FR-NAV-01 Authenticated Navbar
+### FR-NAV-01 App layout and top navbar
 
-`[ResumeAI] ····· [ThemeToggle] [user email] [New Resume] [Logout]`
+Authenticated pages use `AppLayout`: a CSS grid with areas `"sidebar navbar" / "sidebar content"`, columns `auto 1fr`, rows `auto 1fr`.
 
-- **ResumeAI** links to `/`.
-- **New Resume** goes to `/resume/new`. If already on `/resume/new`, see [FR-BLD-13](#fr-bld-13-new-resume-while-on-the-builder).
-- Below `md`: the email is hidden, and New Resume and Logout are icon-only with aria-labels.
+Top navbar: `[☰ (mobile)] [ResumeAI] ····· [ThemeToggle] [user email] [Logout]`
+
+- **ResumeAI** links to `/dashboard`.
+- Below `md`: the email is hidden, Logout is icon-only, and the hamburger opens the sidebar drawer.
+
+### FR-NAV-05 Sidebar
+
+| Item           | Icon            | Goes to                                                                                                                                     |
+| -------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| Dashboard      | LayoutDashboard | `/dashboard`                                                                                                                                |
+| Create Resume  | FilePlus        | `/resume/new`. If already there, see [FR-BLD-13](#fr-bld-13-new-resume-while-on-the-builder).                                               |
+| Analyze Resume | BarChart2       | `/resume/:id/analyze` when the URL has a resume id (edit or analyze page). Otherwise a toast "Select a resume to analyze" and `/dashboard`. |
+| Drafts         | FileText        | `/dashboard?tab=drafts`                                                                                                                     |
+
+- **Active item:** `bg-primary/10 text-primary`. Dashboard and Drafts both live on `/dashboard`, so the `tab` query decides which one is active.
+- **md and up:**
+  - 240px expanded (icon + label), 64px collapsed (icon only, label kept for screen readers and as a tooltip);
+  - a toggle at the bottom (ChevronLeft / ChevronRight);
+  - width animates (200 ms);
+  - the collapsed state is saved in localStorage `sidebar_collapsed` (`"true"` / `"false"`).
+- **Below md:** hidden. The hamburger opens it as an overlay drawer (always expanded) with a backdrop.
+  - Closes on backdrop click, Esc, the close button, or choosing an item.
+  - Focus moves to the close button on open and back to the hamburger on close.
+  - While it's open, the navbar and content are inert and the page doesn't scroll.
 
 ### FR-NAV-02 Public Navbar
 
-`[ResumeAI] ····· [ThemeToggle]`. Used on `/login`, `/register` and the 404 page. ResumeAI links to `/`.
+`[ResumeAI] ····· [ThemeToggle]`. Used on `/login`, `/register`, `/privacy-policy`, `/terms-and-conditions` and the 404 page. ResumeAI links to `/`.
 
 ### FR-NAV-03 Theme toggle
 
@@ -158,7 +179,7 @@ Each route sets `document.title` to `{Page} · ResumeAI`:
 
 ### FR-DASH-01 Tabs
 
-Two tabs: **Resumes** (default) and **Drafts**. The Drafts tab label shows a count when drafts exist ("Drafts (2)"). The selected tab is local state, and the page always opens on Resumes unless the banner link was used.
+Two tabs: **Resumes** (default) and **Drafts**. The Drafts tab label shows a count when drafts exist ("Drafts (2)"). The selected tab lives in the URL: `?tab=drafts` opens Drafts, and no query means Resumes. Switching tabs replaces the history entry. The sidebar Drafts item and the banner link both open Drafts.
 
 ### FR-DASH-02 Load resumes
 
@@ -488,3 +509,29 @@ Used by resume cards, draft cards, the current analysis and history rows.
 ### FR-GEN-05 External links
 
 Project links (when rendered) open in a new tab with `rel="noopener noreferrer"` and must be `http(s)`.
+
+---
+
+## 10. Public site
+
+### FR-PUB-01 Landing page (`/`)
+
+Uses `LandingLayout` (full width, no sidebar, no auth required). Sections in order:
+
+1. **Navbar:** logo, anchors (How It Works · Features · FAQ), ThemeToggle, Login (secondary) and Get Started (primary, `/register`).
+   - Logged in: a single "Go to dashboard" button replaces Login and Get Started.
+   - Below `md`, the links and buttons collapse into a hamburger menu (Esc closes it).
+2. **Hero:** headline, subheadline, "Get Started Free" (primary, `/register`), "See How It Works" (secondary, `#how-it-works`), and a decorative analysis preview.
+3. **How It Works:** 3 numbered steps with Lucide icons.
+4. **Features:** cards for resume builder, AI analysis, match score, PDF export, file import and analysis history.
+5. **FAQ:** native `<details>` accordion, 6 questions.
+6. **Footer:** logo, description, Privacy Policy and Terms and Conditions links, copyright.
+
+Anchors scroll smoothly (except with reduced motion) and sections have `scroll-mt-16` to clear the sticky navbar.
+
+### FR-PUB-02 Legal pages
+
+`/privacy-policy` and `/terms-and-conditions` use `PublicLayout` and the shared `LegalPage` frame (title, "Last updated" date, prose styles).
+
+- `CONTACT_EMAIL` and `LEGAL_LAST_UPDATED` live in constants.
+- `CONTACT_EMAIL` is a **placeholder** and must be replaced before launch. The text should get a legal review.

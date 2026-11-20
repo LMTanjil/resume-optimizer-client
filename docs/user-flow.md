@@ -7,25 +7,28 @@ Behavior details are referenced by ID from [functional-requirements.md](function
 
 ## 1. Route map
 
-| Route                 | Access     | Layout       | Page                                                 |
-| --------------------- | ---------- | ------------ | ---------------------------------------------------- |
-| `/`                   | any        | —            | redirect: `/dashboard` if authed, otherwise `/login` |
-| `/login`              | guest only | PublicLayout | Login                                                |
-| `/register`           | guest only | PublicLayout | Register                                             |
-| `/dashboard`          | protected  | AuthLayout   | Dashboard (Resumes / Drafts tabs)                    |
-| `/resume/new`         | protected  | AuthLayout   | ResumeNew                                            |
-| `/resume/:id/edit`    | protected  | AuthLayout   | ResumeEdit                                           |
-| `/resume/:id/analyze` | protected  | AuthLayout   | Analyze                                              |
-| `/logout`             | protected  | —            | Logout (logs out, then `/login`)                     |
-| `*`                   | any        | PublicLayout | NotFound                                             |
+| Route                   | Access     | Layout        | Page                                             |
+| ----------------------- | ---------- | ------------- | ------------------------------------------------ |
+| `/`                     | any        | LandingLayout | Landing (marketing page)                         |
+| `/login`                | guest only | PublicLayout  | Login                                            |
+| `/register`             | guest only | PublicLayout  | Register                                         |
+| `/privacy-policy`       | any        | PublicLayout  | PrivacyPolicy                                    |
+| `/terms-and-conditions` | any        | PublicLayout  | TermsAndConditions                               |
+| `/dashboard`            | protected  | AppLayout     | Dashboard (Resumes / Drafts tabs, `?tab=drafts`) |
+| `/resume/new`           | protected  | AppLayout     | ResumeNew                                        |
+| `/resume/:id/edit`      | protected  | AppLayout     | ResumeEdit                                       |
+| `/resume/:id/analyze`   | protected  | AppLayout     | Analyze                                          |
+| `/logout`               | protected  | —             | Logout (logs out, then `/login`)                 |
+| `*`                     | any        | PublicLayout  | NotFound                                         |
 
 - **Guest only:** an authenticated user is redirected to `/dashboard`.
 - **Protected:** with no session, the user is redirected to `/login`.
 
 ```mermaid
 flowchart LR
-  Root["/"] -->|authed| Dash["/dashboard"]
-  Root -->|guest| Login["/login"]
+  Root["/ (landing)"] -->|Login| Login["/login"]
+  Root -->|Get Started| Register
+  Root -->|Go to dashboard, authed| Dash["/dashboard"]
   Login <--> Register["/register"]
   Login -->|success| Dash
   Register -->|success| Dash

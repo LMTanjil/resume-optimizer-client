@@ -66,6 +66,16 @@ ro-fontend/
 │   │   │       ├── EducationStep.jsx
 │   │   │       ├── SkillsStep.jsx
 │   │   │       └── ProjectsStep.jsx
+│   │   ├── sidebar/
+│   │   │   ├── Sidebar.jsx             # nav items, collapse toggle, mobile drawer + backdrop
+│   │   │   └── SidebarItem.jsx         # NavLink: icon, label, path, collapsed (+ isActive override)
+│   │   ├── landing/
+│   │   │   ├── LandingNavbar.jsx       # anchors, Login / Get Started, mobile menu
+│   │   │   ├── Hero.jsx
+│   │   │   ├── HowItWorks.jsx
+│   │   │   ├── Features.jsx
+│   │   │   ├── FAQ.jsx                 # <details> accordion
+│   │   │   └── Footer.jsx
 │   │   └── analyze/
 │   │       ├── AnalyzeForm.jsx
 │   │       ├── AnalyzeResult.jsx
@@ -77,9 +87,13 @@ ro-fontend/
 │   │       ├── AnalysisHistory.jsx
 │   │       └── AnalysisHistoryRow.jsx
 │   ├── layouts/
-│   │   ├── AuthLayout.jsx              # skip link + Navbar(authenticated) + <main><Outlet/>
+│   │   ├── AppLayout.jsx               # grid: Sidebar | Navbar(authenticated) / <main><Outlet/>
+│   │   ├── LandingLayout.jsx           # LandingNavbar + <main><Outlet/> + Footer
 │   │   └── PublicLayout.jsx            # skip link + Navbar(public) + <main><Outlet/>
 │   ├── pages/
+│   │   ├── Landing.jsx
+│   │   ├── PrivacyPolicy.jsx
+│   │   ├── TermsAndConditions.jsx
 │   │   ├── Login.jsx
 │   │   ├── Register.jsx
 │   │   ├── Dashboard.jsx
@@ -140,15 +154,18 @@ main.jsx
 ### router.jsx
 
 ```
-/                          → RootRedirect (inline: <Navigate> based on useAuth)
+LandingLayout
+└── /                      → Landing     (lazy)
 PublicLayout
 ├── GuestRoute
 │   ├── /login             → Login       (lazy)
 │   └── /register          → Register    (lazy)
+├── /privacy-policy        → PrivacyPolicy       (lazy)
+├── /terms-and-conditions  → TermsAndConditions  (lazy)
 └── *                      → NotFound    (lazy)
 ProtectedRoute
 ├── /logout                → Logout      (not lazy)
-└── AuthLayout
+└── AppLayout
     ├── /dashboard         → Dashboard   (lazy)
     ├── /resume/new        → ResumeNew   (lazy)
     ├── /resume/:id/edit   → ResumeEdit  (lazy)
@@ -162,16 +179,29 @@ Each layout wraps `<Outlet/>` in `<Suspense fallback={<Spinner page/>}>`.
 ## 3. Layouts
 
 ```
-AuthLayout
+AppLayout   (grid areas "sidebar navbar" / "sidebar content"; state: collapsed, mobileOpen)
 ├── skip link
-├── Navbar variant="authenticated"
-│   ├── Link "ResumeAI" → /
+├── Sidebar          props: collapsed, onToggleCollapsed, mobileOpen, onCloseMobile, closeButtonRef
+│   ├── backdrop (mobile, when open)
+│   ├── drawer header: Link "ResumeAI" + close button (mobile only)
+│   ├── SidebarItem × 4  props: icon, label, path, collapsed, isActive?, onClick?
+│   │   Dashboard · Create Resume (on /resume/new: dispatch NEW_RESUME_EVENT) ·
+│   │   Analyze Resume (id from URL, else toast + /dashboard) · Drafts (/dashboard?tab=drafts)
+│   └── collapse toggle (md and up)
+├── Navbar variant="authenticated"   props: menuOpen, onOpenMenu, menuButtonRef
+│   ├── Button ghost hamburger (< md) → open drawer
+│   ├── Link "ResumeAI" → /dashboard
 │   ├── ThemeToggle
 │   ├── <span> user email (hidden < md)
-│   ├── Button secondary "New Resume" (iconOnly < md)   → on /resume/new: dispatch NEW_RESUME_EVENT; else navigate("/resume/new")
 │   └── Button ghost "Logout" (iconOnly < md)          → navigate("/logout")
 └── <main id="main"> container (max-w-content)
     └── Outlet
+
+LandingLayout
+├── skip link
+├── LandingNavbar
+├── <main id="main"> → Outlet (Landing: Hero · HowItWorks · Features · FAQ)
+└── Footer
 
 PublicLayout
 ├── skip link

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react"
 import toast from "react-hot-toast"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useSearchParams } from "react-router-dom"
 import ConfirmModal from "../components/common/ConfirmModal"
 import ErrorPanel from "../components/common/ErrorPanel"
 import DashboardTabs from "../components/dashboard/DashboardTabs"
@@ -25,7 +25,11 @@ export default function Dashboard() {
     user?.id
   )
 
-  const [activeTab, setActiveTab] = useState("resumes")
+  // The tab lives in the URL so the sidebar's Drafts link (/dashboard?tab=drafts) can open it.
+  const [searchParams, setSearchParams] = useSearchParams()
+  const activeTab = searchParams.get("tab") === "drafts" ? "drafts" : "resumes"
+  const setActiveTab = (tab) =>
+    setSearchParams(tab === "drafts" ? { tab: "drafts" } : {}, { replace: true })
   const [resumes, setResumes] = useState([])
   const [status, setStatus] = useState("loading") // loading | ready | error
   const [loadError, setLoadError] = useState("")

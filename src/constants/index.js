@@ -18,10 +18,18 @@ export const STORAGE_KEYS = {
   theme: "theme",
   drafts: (userId) => `drafts:${userId}`,
   draftsBannerDismissedAt: (userId) => `draftsBannerDismissedAt:${userId}`,
+  sidebarCollapsed: "sidebar_collapsed",
 }
+
+// Public site (landing, legal pages). Placeholder contact — replace before launch.
+export const CONTACT_EMAIL = "support@resumeai.example"
+export const LEGAL_LAST_UPDATED = "November 17, 2026"
 
 // Window event fired by the Navbar when "New Resume" is clicked while already on /resume/new.
 export const NEW_RESUME_EVENT = "resumeai:new-resume"
+
+// id of the app sidebar, referenced by the navbar hamburger and the collapse toggle.
+export const SIDEBAR_ID = "app-sidebar"
 
 export const MAX_DRAFTS = 10
 export const DRAFT_TTL_DAYS = 30
@@ -79,6 +87,7 @@ export const TOAST_MESSAGES = {
   pdfFailed: "Couldn't generate the PDF. Please try again.",
   resumeImported: "Resume imported — review and edit your details",
   importEmpty: "We couldn't find any resume details in that file.",
+  selectResumeToAnalyze: "Select a resume to analyze",
 }
 
 export const VALIDATION_MESSAGES = {

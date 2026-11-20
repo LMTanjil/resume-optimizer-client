@@ -26,6 +26,7 @@ const Button = forwardRef(function Button(
     iconOnly = false,
     hideLabelBelowMd = false,
     to,
+    href,
     className = "",
     disabled,
     children,
@@ -46,6 +47,15 @@ const Button = forwardRef(function Button(
       )}
     </>
   )
+
+  // In-page anchors (e.g. "#how-it-works") need a plain <a>, not a router Link.
+  if (href) {
+    return (
+      <a ref={ref} href={href} className={classes} {...rest}>
+        {content}
+      </a>
+    )
+  }
 
   if (to) {
     return (
