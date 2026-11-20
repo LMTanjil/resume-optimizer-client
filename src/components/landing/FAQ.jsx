@@ -1,6 +1,8 @@
 import { ChevronDown } from "lucide-react"
 import { Link } from "react-router-dom"
 import { IMPORT_MAX_MB } from "../../constants"
+import Reveal from "./Reveal"
+import { EYEBROW } from "./styles"
 
 const QUESTIONS = [
   {
@@ -42,14 +44,10 @@ const QUESTIONS = [
 
 export default function FAQ() {
   return (
-    <section
-      id="faq"
-      aria-labelledby="faq-heading"
-      className="scroll-mt-16 border-t border-border bg-surface"
-    >
-      <div className="mx-auto max-w-3xl px-4 py-16 md:px-6 md:py-24 lg:px-8">
+    <section id="faq" aria-labelledby="faq-heading" className="scroll-mt-16 bg-bg">
+      <Reveal className="mx-auto max-w-3xl px-4 py-16 md:px-6 md:py-24 lg:px-8">
         <div className="text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-accent">FAQ</p>
+          <p className={EYEBROW}>FAQ</p>
           <h2 id="faq-heading" className="mt-2 text-3xl font-bold md:text-4xl">
             Frequently asked questions
           </h2>
@@ -57,7 +55,10 @@ export default function FAQ() {
 
         <div className="mt-12 flex flex-col gap-3">
           {QUESTIONS.map(({ q, a }) => (
-            <details key={q} className="group rounded-lg border border-border bg-bg">
+            <details
+              key={q}
+              className="group rounded-lg border border-border bg-surface shadow-sm transition-colors duration-200 hover:bg-muted/60"
+            >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-lg p-5 font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent [&::-webkit-details-marker]:hidden">
                 {q}
                 <ChevronDown
@@ -70,7 +71,7 @@ export default function FAQ() {
             </details>
           ))}
         </div>
-      </div>
+      </Reveal>
     </section>
   )
 }

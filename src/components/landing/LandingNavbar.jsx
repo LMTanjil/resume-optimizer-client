@@ -18,6 +18,15 @@ const LINK_CLASSES =
   "rounded-lg px-3 py-2 text-sm font-medium text-text-muted transition-colors hover:bg-muted " +
   "hover:text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
 
+// Desktop links: a primary underline slides in from the left on hover / keyboard focus.
+const UNDERLINE_LINK_CLASSES =
+  "relative rounded-lg px-3 py-2 text-sm font-medium text-text-muted transition-colors " +
+  "hover:text-text focus-visible:text-text focus-visible:outline-none " +
+  "focus-visible:ring-2 focus-visible:ring-accent " +
+  "after:absolute after:inset-x-3 after:bottom-1 after:h-0.5 after:origin-left after:scale-x-0 " +
+  "after:rounded-full after:bg-primary after:transition-transform after:duration-200 " +
+  "after:content-[''] hover:after:scale-x-100 focus-visible:after:scale-x-100"
+
 // Landing page navbar: logo, section anchors, Login / Get Started. Links collapse below md.
 export default function LandingNavbar() {
   const { isAuthenticated } = useAuth()
@@ -70,7 +79,7 @@ export default function LandingNavbar() {
         <ul className="hidden items-center gap-1 md:flex">
           {LINKS.map((link) => (
             <li key={link.href}>
-              <a href={link.href} className={LINK_CLASSES}>
+              <a href={link.href} className={UNDERLINE_LINK_CLASSES}>
                 {link.label}
               </a>
             </li>

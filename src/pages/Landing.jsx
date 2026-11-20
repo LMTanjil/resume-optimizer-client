@@ -1,3 +1,4 @@
+import About from "../components/landing/About"
 import FAQ from "../components/landing/FAQ"
 import Features from "../components/landing/Features"
 import Hero from "../components/landing/Hero"
@@ -10,6 +11,7 @@ export default function Landing() {
   return (
     <>
       <Hero />
+      <About />
       <HowItWorks />
       <Features />
       <FAQ />

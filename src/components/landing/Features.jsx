@@ -1,4 +1,6 @@
 import { FileDown, FilePen, Gauge, History, Sparkles, Upload } from "lucide-react"
+import { EYEBROW, ICON_CHIP, LIFT_ON_HOVER } from "./styles"
+import Reveal from "./Reveal"
 
 const FEATURES = [
   {
@@ -35,10 +37,10 @@ const FEATURES = [
 
 export default function Features() {
   return (
-    <section id="features" aria-labelledby="features-heading" className="scroll-mt-16">
-      <div className="mx-auto max-w-content px-4 py-16 md:px-6 md:py-24 lg:px-8">
+    <section id="features" aria-labelledby="features-heading" className="scroll-mt-16 bg-muted">
+      <Reveal className="mx-auto max-w-content px-4 py-16 md:px-6 md:py-24 lg:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-accent">Features</p>
+          <p className={EYEBROW}>Features</p>
           <h2 id="features-heading" className="mt-2 text-3xl font-bold md:text-4xl">
             Everything you need to apply with confidence
           </h2>
@@ -48,17 +50,26 @@ export default function Features() {
           {FEATURES.map(({ icon: Icon, title, body }) => (
             <li
               key={title}
-              className="flex flex-col gap-3 rounded-lg border border-border bg-surface p-6 transition-shadow hover:shadow-md"
+              className={`flex flex-col justify-between gap-6 rounded-lg border border-border border-l-4 border-l-primary bg-surface p-6 shadow-sm ${LIFT_ON_HOVER}`}
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
-                <Icon size={24} aria-hidden="true" />
+              <div className="flex flex-col gap-3">
+                <span className={ICON_CHIP}>
+                  <Icon size={24} aria-hidden="true" />
+                </span>
+                <h3 className="text-lg font-semibold">{title}</h3>
+                <p className="text-text-muted">{body}</p>
+              </div>
+              {/* Decorative only: not a link, hidden from screen readers. */}
+              <span
+                aria-hidden="true"
+                className="cursor-default text-sm font-medium text-text-muted"
+              >
+                Learn more →
               </span>
-              <h3 className="text-lg font-semibold">{title}</h3>
-              <p className="text-text-muted">{body}</p>
             </li>
           ))}
         </ul>
-      </div>
+      </Reveal>
     </section>
   )
 }
