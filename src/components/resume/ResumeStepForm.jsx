@@ -8,8 +8,8 @@ import { useResumeForm } from "../../hooks/useResumeForm"
 import { useUnsavedChanges } from "../../hooks/useUnsavedChanges"
 import { getErrorMessage, shouldShowError } from "../../utils/apiError"
 import { onSessionExpired } from "../../utils/authEvents"
-import { emptyFormData, newId } from "../../utils/resumeData"
-import { findFirstInvalidStep } from "../../utils/validation"
+import { emptyFormData, mergeImported, newId, snapshot } from "../../utils/resumeData"
+import { findFirstInvalidStep, validateImportFile } from "../../utils/validation"
 import BackLink from "../common/BackLink"
 import ConfirmModal from "../common/ConfirmModal"
 import StepActions from "./StepActions"
@@ -44,6 +44,7 @@ export default function ResumeStepForm({
   initialStep = 1,
   draft = null,
   onSave,
+  onImport,
 }) {
   const navigate = useNavigate()
   const location = useLocation()
@@ -56,6 +57,8 @@ export default function ResumeStepForm({
   const [activeDraft, setActiveDraft] = useState(draft)
   const [saving, setSaving] = useState(false)
   const [resetPending, setResetPending] = useState(false)
+  const [importing, setImporting] = useState(false)
+  const importAbortRef = useRef(null)
   const sessionKeyRef = useRef(draft?.sessionKey ?? newId())
   const containerRef = useRef(null)
   const headingRef = useRef(null)
@@ -126,6 +129,38 @@ export default function ResumeStepForm({
     window.addEventListener(NEW_RESUME_EVENT, onNewResume)
     return () => window.removeEventListener(NEW_RESUME_EVENT, onNewResume)
   }, [mode])
+
+  // Cancel an in-flight import when the builder unmounts.
+  useEffect(() => () => importAbortRef.current?.abort(), [])
+
+  // Import from file (FR-BLD-14): upload, then merge the extracted data into the form.
+  const handleImport = async (file) => {
+    if (importing) return
+    const fileError = validateImportFile(file)
+    if (fileError) {
+      toast.error(fileError)
+      return
+    }
+
+    const controller = new AbortController()
+    importAbortRef.current = controller
+    setImporting(true)
+    try {
+      const { data } = await onImport(file, { signal: controller.signal })
+      const current = dataRef.current
+      const merged = mergeImported(current, data)
+      if (snapshot(merged) === snapshot(current)) {
+        toast.error(TOAST_MESSAGES.importEmpty)
+      } else {
+        form.importData(merged)
+        toast.success(TOAST_MESSAGES.resumeImported)
+      }
+    } catch (error) {
+      if (shouldShowError(error)) toast.error(getErrorMessage(error))
+    } finally {
+      if (!controller.signal.aborted) setImporting(false)
+    }
+  }
 
   const handleNext = () => {
     if (form.validateCurrentStep(step)) goToStep(step + 1, { viaNext: true })
@@ -206,7 +241,10 @@ export default function ResumeStepForm({
         >
           {STEPS[step - 1].label}
         </h2>
-        <StepComponent form={form} />
+        <StepComponent
+          form={form}
+          importer={onImport ? { importing, onFile: handleImport } : null}
+        />
       </section>
 
       <StepActions
@@ -214,6 +252,7 @@ export default function ResumeStepForm({
         step={step}
         total={STEPS.length}
         saving={saving}
+        busy={importing}
         onCancel={() => navigate("/dashboard")}
         onBack={handleBack}
         onNext={handleNext}

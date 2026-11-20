@@ -126,6 +126,9 @@ function reducer(state, action) {
       }))
     case "SET_ERRORS":
       return { ...state, errors: action.errors }
+    // Replaces the data but keeps the saved snapshot, so an import counts as unsaved changes.
+    case "IMPORT":
+      return { ...state, data: action.data, errors: {} }
     case "RESET":
       return init({ initialData: action.data, dirtyFromStart: action.dirtyFromStart ?? false })
     case "MARK_SAVED":
@@ -169,6 +172,7 @@ export function useResumeForm(initialData, { dirtyFromStart = false } = {}) {
       removeSkill: (index) => dispatch({ type: "REMOVE_SKILL", index }),
       addTech: (itemId, tag) => dispatch({ type: "ADD_TECH", itemId, tag }),
       removeTech: (itemId, index) => dispatch({ type: "REMOVE_TECH", itemId, index }),
+      importData: (nextData) => dispatch({ type: "IMPORT", data: nextData }),
       reset: (nextData, options = {}) =>
         dispatch({ type: "RESET", data: nextData, dirtyFromStart: options.dirtyFromStart }),
       markSaved: () => dispatch({ type: "MARK_SAVED" }),

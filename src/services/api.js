@@ -1,5 +1,5 @@
 import axios from "axios"
-import { ANALYZE_TIMEOUT_MS, API_TIMEOUT_MS, STORAGE_KEYS } from "../constants"
+import { ANALYZE_TIMEOUT_MS, API_TIMEOUT_MS, IMPORT_TIMEOUT_MS, STORAGE_KEYS } from "../constants"
 import { emitSessionExpired } from "../utils/authEvents"
 
 // Single axios instance — the only place that talks to the backend. See docs/api-contracts.md.
@@ -41,6 +41,13 @@ export const getResume = (id) => api.get(`/resumes/${id}`)
 export const createResume = (data) => api.post("/resumes", data)
 export const updateResume = (id, data) => api.put(`/resumes/${id}`, data)
 export const deleteResume = (id) => api.delete(`/resumes/${id}`)
+
+// Import: multipart upload, field "file". Returns extracted { title?, content }.
+export function importResume(file, { signal } = {}) {
+  const body = new FormData()
+  body.append("file", file)
+  return api.post("/resume/import", body, { timeout: IMPORT_TIMEOUT_MS, signal })
+}
 
 // Analyze
 export const analyzeResume = (resumeId, jobDescription) =>

@@ -111,6 +111,45 @@ export function toPayload(data) {
   }
 }
 
+// Import response → form data, merged over the current form.
+// Accepts { title?, content } or a bare content object. A value found in the file wins;
+// anything the file didn't provide (empty string or empty list) keeps the current value,
+// so e.g. the prefilled contact name survives an import that has no name.
+export function mergeImported(current, response) {
+  const source = response && typeof response === "object" ? response : {}
+  const content = source.content && typeof source.content === "object" ? source.content : source
+  const imported = toFormData({ title: source.title, content })
+  const pick = (next, prev) => (next.trim() ? next.trim() : prev)
+  const pickList = (next, prev) => (next.length ? next : prev)
+
+  const seen = new Set()
+  const skills = imported.content.skills
+    .map((skill) => skill.trim())
+    .filter((skill) => {
+      const key = skill.toLowerCase()
+      if (!skill || seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+
+  const contact = {}
+  Object.keys(current.content.contact).forEach((key) => {
+    contact[key] = pick(imported.content.contact[key] ?? "", current.content.contact[key])
+  })
+
+  return {
+    title: pick(imported.title, current.title),
+    content: {
+      contact,
+      summary: pick(imported.content.summary, current.content.summary),
+      experience: pickList(imported.content.experience, current.content.experience),
+      education: pickList(imported.content.education, current.content.education),
+      skills: pickList(skills, current.content.skills),
+      projects: pickList(imported.content.projects, current.content.projects),
+    },
+  }
+}
+
 // Untrimmed, id-free snapshot used for the dirty check.
 export function snapshot(data) {
   const { content } = data

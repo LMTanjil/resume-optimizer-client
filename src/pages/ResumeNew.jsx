@@ -4,7 +4,7 @@ import ResumeStepForm from "../components/resume/ResumeStepForm"
 import { useAuth } from "../hooks/useAuth"
 import { readDrafts } from "../hooks/useDrafts"
 import { usePageTitle } from "../hooks/usePageTitle"
-import { createResume } from "../services/api"
+import { createResume, importResume } from "../services/api"
 import { emptyFormData, toFormData } from "../utils/resumeData"
 
 export default function ResumeNew() {
@@ -35,6 +35,7 @@ export default function ResumeNew() {
       initialStep={setup.initialStep}
       draft={setup.draft}
       onSave={(payload) => createResume(payload)}
+      onImport={importResume}
     />
   )
 }

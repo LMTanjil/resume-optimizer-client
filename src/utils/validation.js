@@ -1,4 +1,10 @@
-import { LIMITS, STEPS, VALIDATION_MESSAGES as MSG } from "../constants"
+import {
+  IMPORT_EXTENSIONS,
+  IMPORT_MAX_MB,
+  LIMITS,
+  STEPS,
+  VALIDATION_MESSAGES as MSG,
+} from "../constants"
 
 // All validation rules live here — docs/error-handling.md §6.
 // Builder errors are keyed by field path, e.g. "contact.email" or "experience.<itemId>.company".
@@ -38,6 +44,17 @@ export function validateRegister({ name, email, password, confirmPassword }) {
   Object.assign(errors, validateLogin({ email, password }))
   if (confirmPassword !== password) errors.confirmPassword = MSG.passwordMismatch
   return errors
+}
+
+// ---------- Resume import ----------
+
+// The file input's `accept` is only a hint, so the extension and size are checked again here.
+export function validateImportFile(file) {
+  const name = String(file?.name ?? "").toLowerCase()
+  if (!IMPORT_EXTENSIONS.some((ext) => name.endsWith(ext))) return MSG.importType
+  if (!file.size) return MSG.importEmptyFile
+  if (file.size > IMPORT_MAX_MB * 1024 * 1024) return MSG.importTooLarge
+  return null
 }
 
 // ---------- Resume builder ----------

@@ -7,7 +7,7 @@ import { TOAST_MESSAGES } from "../constants"
 import { useAuth } from "../hooks/useAuth"
 import { useDrafts } from "../hooks/useDrafts"
 import { usePageTitle } from "../hooks/usePageTitle"
-import { getResume, updateResume } from "../services/api"
+import { getResume, importResume, updateResume } from "../services/api"
 import { getErrorMessage, isNotFound, shouldShowError } from "../utils/apiError"
 import { toFormData } from "../utils/resumeData"
 
@@ -93,6 +93,7 @@ export default function ResumeEdit() {
       initialStep={setup.initialStep}
       draft={setup.draft}
       onSave={(payload) => updateResume(id, payload)}
+      onImport={importResume}
     />
   )
 }

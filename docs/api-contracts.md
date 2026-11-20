@@ -267,6 +267,18 @@ The frontend splits `getAnalyses` results as follows:
 
 `jobDescription` is 50–5000 characters (validated by the frontend).
 
+### 4.4 Import — **new backend endpoint**
+
+| Function                       | Method & path                        | Body                                | 2xx response          |
+| ------------------------------ | ------------------------------------ | ----------------------------------- | --------------------- |
+| `importResume(file, {signal})` | `POST /resume/import` (timeout 30 s) | `multipart/form-data`, field `file` | `{ title?, content }` |
+
+- Path is relative to `VITE_API_URL`, so the full URL is `/api/resume/import`. Note it is **singular** `resume`, unlike `/resumes`.
+- Accepted files: `.pdf`, `.docx`, `.md`, up to 5 MB. The frontend checks both before uploading. The backend should still reject anything else with a 400 `{ error }`, and its message is shown as a toast.
+- `content` uses the same shape as §3.2. Any key may be missing or empty. A bare `content` object (without the wrapper) is also accepted.
+- Nothing is saved. The frontend only fills the builder form with the result.
+- Requires auth. A 401 triggers the normal session-expired handling.
+
 ---
 
 ## 5. `api.js` reference implementation shape

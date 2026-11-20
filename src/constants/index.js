@@ -6,6 +6,11 @@ export const APP_NAME = "ResumeAI"
 export const API_TIMEOUT_MS = 10_000
 export const ANALYZE_TIMEOUT_MS = 30_000
 export const ANALYZE_SLOW_AFTER_MS = 10_000
+export const IMPORT_TIMEOUT_MS = 30_000
+
+// Resume import (Contact step) — docs/api-contracts.md §4.4.
+export const IMPORT_EXTENSIONS = [".pdf", ".docx", ".md"]
+export const IMPORT_MAX_MB = 5
 
 export const STORAGE_KEYS = {
   token: "token",
@@ -72,6 +77,8 @@ export const TOAST_MESSAGES = {
   draftDiscarded: "Draft discarded.",
   completeRequired: "Please complete all required fields",
   pdfFailed: "Couldn't generate the PDF. Please try again.",
+  resumeImported: "Resume imported — review and edit your details",
+  importEmpty: "We couldn't find any resume details in that file.",
 }
 
 export const VALIDATION_MESSAGES = {
@@ -83,6 +90,9 @@ export const VALIDATION_MESSAGES = {
   url: "Enter a valid URL starting with http:// or https://",
   techRequired: "Add at least one technology",
   duplicateTag: (tag) => `“${tag}” is already added`,
+  importType: "Choose a PDF, DOCX or Markdown (.md) file",
+  importEmptyFile: "That file is empty",
+  importTooLarge: `Files must be ${IMPORT_MAX_MB} MB or smaller`,
 }
 
 // Welcome greetings — docs/greeting-messages.md. `{name}` is replaced with the display name.

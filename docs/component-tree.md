@@ -55,6 +55,7 @@ ro-fontend/
 │   │   │   ├── ResumeStepForm.jsx      # orchestrates steps, validation, save, blocker, draft hookup
 │   │   │   ├── StepIndicator.jsx
 │   │   │   ├── StepActions.jsx         # Cancel / Back / Save / Next bar
+│   │   │   ├── ImportResumeButton.jsx  # "Import existing resume" + hidden file input
 │   │   │   ├── ArrayEntryCard.jsx
 │   │   │   ├── BulletListEditor.jsx
 │   │   │   ├── TagInput.jsx
@@ -244,7 +245,8 @@ ResumeStepForm
 ├── h1 "Create resume" | "Edit resume"
 ├── StepIndicator          props: steps, current
 ├── <section> fade wrapper (key = step)
-│   ├── ContactStep        props: values, errors, onChange
+│   ├── ContactStep        props: form, importer ({ importing, onFile } | null)
+│   │   └── ImportResumeButton  props: importing, onFile
 │   ├── BasicInfoStep      props: values, errors, onChange
 │   ├── ExperienceStep     props: items, errors, onAdd, onRemove, onChange, onAddBullet, onUpdateBullet, onRemoveBullet
 │   │   └── ArrayEntryCard ×N  props: title, onRemove, children
@@ -258,7 +260,7 @@ ResumeStepForm
 │       └── ArrayEntryCard ×N
 │           ├── FormField + Input (name), Textarea (description, counter), Input (link)
 │           └── TagInput (tech)
-├── StepActions            props: mode, step, total, saving, onCancel, onBack, onNext, onSave
+├── StepActions            props: mode, step, total, saving, busy, onCancel, onBack, onNext, onSave
 └── ConfirmModal (discard) props: open = blocker.state === "blocked" | resetPending, title/body (draft vs normal)
 ```
 

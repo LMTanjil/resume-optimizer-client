@@ -314,6 +314,23 @@ Clicking Navbar **New Resume** while on `/resume/new`:
 - If dirty: show the Discard modal. On confirm, reset the form to an empty resume (with the name pre-fill) at Step 1.
 - If clean: do nothing.
 
+### FR-BLD-14 Import from file
+
+- On the Contact step, between the step heading and the fields: an outlined (secondary) **Import existing resume** button with the Lucide `Upload` icon, plus a hint: "PDF, DOCX or Markdown, up to 5 MB."
+- Clicking it opens a file picker limited to `.pdf`, `.docx` and `.md`. Wrong type, an empty file or a file over 5 MB shows an error toast and nothing is uploaded.
+- While uploading:
+  - the button shows a spinner and "Extracting resume data…" (also announced to screen readers);
+  - the contact fields, Next and Save are disabled.
+- On success the extracted data is dispatched into the builder reducer (`IMPORT`) and pre-fills all steps:
+  - values found in the file replace current ones;
+  - anything the file didn't provide keeps its current value (e.g. the name pre-fill);
+  - skills are trimmed and de-duplicated, ignoring case.
+- Then the toast "Resume imported — review and edit your details" shows and the user stays on Step 1.
+- The import counts as unsaved changes, so the Discard modal and drafts apply.
+- If the response contains nothing usable: the toast "We couldn't find any resume details in that file." and the form is unchanged.
+- Errors use the standard API error toast. Leaving the builder cancels an in-flight upload.
+- Available in both create and edit mode.
+
 ---
 
 ## 6. Drafts

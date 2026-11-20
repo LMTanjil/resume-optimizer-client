@@ -7,6 +7,7 @@ export default function StepActions({
   step,
   total,
   saving,
+  busy = false,
   onCancel,
   onBack,
   onNext,
@@ -23,7 +24,7 @@ export default function StepActions({
       </Button>
       <div className="flex flex-wrap justify-end gap-3">
         {!isFirst && (
-          <Button variant="secondary" icon={ArrowLeft} onClick={onBack} disabled={saving}>
+          <Button variant="secondary" icon={ArrowLeft} onClick={onBack} disabled={saving || busy}>
             Back
           </Button>
         )}
@@ -34,6 +35,7 @@ export default function StepActions({
             onClick={onSave}
             loading={saving}
             loadingText="Saving…"
+            disabled={busy}
           >
             Save Changes
           </Button>
@@ -45,11 +47,12 @@ export default function StepActions({
             onClick={onSave}
             loading={saving}
             loadingText="Saving…"
+            disabled={busy}
           >
             Save Resume
           </Button>
         ) : (
-          <Button variant="primary" onClick={onNext} disabled={saving}>
+          <Button variant="primary" onClick={onNext} disabled={saving || busy}>
             Next
             <ArrowRight size={18} aria-hidden="true" />
           </Button>

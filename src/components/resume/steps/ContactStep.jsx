@@ -1,6 +1,7 @@
 import { LIMITS } from "../../../constants"
 import FormField from "../../ui/FormField"
 import Input from "../../ui/Input"
+import ImportResumeButton from "../ImportResumeButton"
 
 const FIELDS = [
   {
@@ -22,31 +23,37 @@ const FIELDS = [
   { key: "location", label: "Location", max: LIMITS.location, placeholder: "City, Country" },
 ]
 
-export default function ContactStep({ form }) {
+export default function ContactStep({ form, importer }) {
   const { contact } = form.data.content
   return (
-    <div className="grid gap-4 md:grid-cols-2">
-      {FIELDS.map(({ key, label, required, max, type = "text", autoComplete, placeholder }) => (
-        <FormField
-          key={key}
-          id={`contact-${key}`}
-          label={label}
-          required={required}
-          error={form.errors[`contact.${key}`]}
-        >
-          {(field) => (
-            <Input
-              {...field}
-              type={type}
-              autoComplete={autoComplete}
-              placeholder={placeholder}
-              maxLength={max}
-              value={contact[key]}
-              onChange={(event) => form.setContact(key, event.target.value)}
-            />
-          )}
-        </FormField>
-      ))}
-    </div>
+    <>
+      {importer && <ImportResumeButton importing={importer.importing} onFile={importer.onFile} />}
+      <fieldset
+        disabled={importer?.importing}
+        className="m-0 grid min-w-0 gap-4 border-0 p-0 md:grid-cols-2"
+      >
+        {FIELDS.map(({ key, label, required, max, type = "text", autoComplete, placeholder }) => (
+          <FormField
+            key={key}
+            id={`contact-${key}`}
+            label={label}
+            required={required}
+            error={form.errors[`contact.${key}`]}
+          >
+            {(field) => (
+              <Input
+                {...field}
+                type={type}
+                autoComplete={autoComplete}
+                placeholder={placeholder}
+                maxLength={max}
+                value={contact[key]}
+                onChange={(event) => form.setContact(key, event.target.value)}
+              />
+            )}
+          </FormField>
+        ))}
+      </fieldset>
+    </>
   )
 }
