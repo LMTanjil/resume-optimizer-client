@@ -45,15 +45,20 @@ export async function exportPdf(resume, analysis) {
     y += 8
   }
 
+  // normalizeContent fills missing keys, so content.contact is always an object even when the
+  // API returned no contact (all fields are then "").
   const content = normalizeContent(resume?.content)
   const { contact } = content
 
-  // Header
-  write(contact.name || resume?.title || "Resume", { size: FONT.name, bold: true, gapAfter: 4 })
-  write([contact.email, contact.phone, contact.location].filter(Boolean).join("  ·  "), {
-    size: FONT.meta,
-  })
-  if (resume?.title && contact.name) write(resume.title, { size: FONT.body, bold: true })
+  // 1. Resume title
+  write(resume?.title || contact.name || "Resume", { size: FONT.name, bold: true, gapAfter: 4 })
+
+  // 2. Contact details: name | email | phone | location, non-empty fields only; no line if none.
+  const contactLine = [contact.name, contact.email, contact.phone, contact.location]
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .join(" | ")
+  if (contactLine) write(contactLine, { size: FONT.meta })
 
   if (content.summary) {
     heading("Summary")
@@ -88,14 +93,34 @@ export async function exportPdf(resume, analysis) {
     content.projects.forEach((item) => {
       write(item.name, { bold: true, gapAfter: 0 })
       write(item.description, { gapAfter: 0 })
-      if (item.tech.length) write(`Tech: ${item.tech.join(", ")}`, { size: FONT.meta, gapAfter: 0 })
+      if (item.tech.length) {
+        // Wrap the joined tech list to the content width, then advance y by the wrapped lines.
+        doc.setFont("helvetica", "normal")
+        doc.setFontSize(FONT.meta)
+        const techLines = doc.splitTextToSize(`Tech: ${item.tech.join(", ")}`, contentWidth)
+        const lineHeight = FONT.meta + PAGE.lineGap
+        techLines.forEach((line) => {
+          ensureSpace(lineHeight)
+          doc.text(line, PAGE.margin, y + FONT.meta)
+          y += lineHeight
+        })
+      }
       if (item.link) write(item.link, { size: FONT.meta, gapAfter: 0 })
       y += 6
     })
   }
 
   if (analysis) {
-    y += 10
+    // 8. Divider between the resume and the analysis
+    ensureSpace(40)
+    y += 16
+    doc.setDrawColor(120)
+    doc.setLineWidth(1.5)
+    doc.line(PAGE.margin, y, pageWidth - PAGE.margin, y)
+    doc.setLineWidth(0.5)
+    y += 8
+
+    // 9. Analysis results
     heading("Analysis")
     write(`Date: ${formatIsoDay(analysis.created_at)}`, { size: FONT.meta })
     write(`Match score: ${analysis.match_score}%`, { bold: true, gapAfter: 6 })
