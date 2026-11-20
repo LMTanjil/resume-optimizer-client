@@ -154,6 +154,7 @@ Top navbar: `[☰ (mobile)] [ResumeAI] ····· [ThemeToggle] [avatar ▾]`
 | My Resumes    | FileText        | `/dashboard/resumes`                                                                          |
 | Create Resume | FilePlus        | `/resume/new`. If already there, see [FR-BLD-13](#fr-bld-13-new-resume-while-on-the-builder). |
 | Analyze       | BarChart2       | `/analyze` (resume picker). Also shown active on `/resume/:id/analyze`.                       |
+| Preview       | FileOutput      | `/preview` (resume picker). Also shown active on `/resume/:id/preview`.                       |
 | Drafts        | FolderOpen      | `/dashboard/drafts`                                                                           |
 
 - **Active item:** `bg-primary/10 text-primary` (label in the normal text color in dark mode). Each item matches its route exactly, so `/dashboard` highlights only Overview. The builder's edit page highlights nothing.
@@ -192,6 +193,8 @@ Each route sets `document.title` to `{Page} · ResumeAI`:
 | /resume/new         | New Resume · ResumeAI     |
 | /resume/:id/edit    | Edit Resume · ResumeAI    |
 | /resume/:id/analyze | Analyze · ResumeAI        |
+| /preview            | Preview · ResumeAI        |
+| /resume/:id/preview | Preview · ResumeAI        |
 | 404                 | Page Not Found · ResumeAI |
 
 ---
@@ -531,6 +534,46 @@ Analysis is allowed for any resume, however empty. There is no warning.
   - "Last analyzed …", "Never analyzed", or "Last analyzed: unavailable" if its analyses failed to load (a skeleton line while loading);
   - a primary **Analyze** button → `/resume/:id/analyze`. Its link is stretched over the card, so the whole card is clickable with one tab stop.
 - While loading: 6 skeleton cards. With no resumes: the empty state "You have no resumes yet." with a **Create Resume** button. If loading fails: ErrorPanel with Retry.
+
+---
+
+## 7a. Preview
+
+### FR-PV-01 Preview picker (`/preview`)
+
+- Heading "Select a resume to preview", plus a short subtitle.
+- One card per resume (same grid as the dashboard): title, "Created …", and a primary **Preview** button → `/resume/:id/preview`, stretched over the card (one tab stop). No analyses are requested.
+- While loading: 6 skeleton cards. With no resumes: the empty state with **Create Resume**. If loading fails: ErrorPanel with Retry.
+
+### FR-PV-02 Preview page (`/resume/:id/preview`)
+
+- Header: back link "Back to Preview" (`/preview`), heading "Preview: {title}", **Analyze** and **Edit resume** buttons.
+- On mount, `getResume(id)` and `getAnalyses(id)` run in parallel. While the resume loads, a skeleton of the whole page is shown.
+- Resume request fails: ErrorPanel with Retry. On 404/403 the message is "Resume not found." and there is no Retry.
+- Layout (lg and up): left 60%, right 40%. Below lg the panels stack: picker and preview first, analysis after.
+- **Left panel:**
+  - Template picker: three cards (Classic, Modern, Minimal) in a radio group, each with a small layout thumbnail and the name. The selected card has a primary border. Default: Classic. Arrow keys move between templates.
+  - **Download PDF** (`PDFDownloadLink`). Filename `{slug(title)}-{template}.pdf`, e.g. `frontend-developer-resume-modern.pdf`. While the PDF is being generated the button reads "Preparing PDF..." with a spinner and can't be clicked.
+  - The PDF (`PDFViewer`, an iframe) at a fixed height. The viewer scrolls, the panel doesn't.
+  - `@react-pdf/renderer` and the templates are loaded lazily (a separate chunk, about 450 kB gzipped) after the page shell, with a skeleton meanwhile.
+- **Right panel** (`AnalysisSidebar`): sticky below the navbar on lg, with its own scroll when taller than the screen.
+  - The newest analysis (sorted by `created_at` desc): "Latest Analysis" with "Analyzed {relative date}", ScoreBar, missing keywords (warning tags), strengths (success tags), numbered suggestions, and a "Run new analysis" link → `/resume/:id/analyze`.
+  - No analyses: "No analysis yet" card with **Analyze this resume** → `/resume/:id/analyze`.
+  - Analyses request fails: ErrorPanel with Retry in this panel; the preview still works.
+
+### FR-PV-03 PDF templates
+
+All three use `@react-pdf/renderer` with the built-in Helvetica, A4, margins 40pt top/bottom and 48pt left/right. Empty fields and empty sections are not printed. A section heading always stays on the same page as its first item. Contact links are printed without `https://`/`www.` and are clickable.
+
+| Template | Layout                                                                                                                                                                                                                              |
+| -------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Classic  | Single column. Name 24pt bold, contact line joined with " · ", rule. Headings 10pt bold uppercase with a `#E0E0E0` bottom border. Body 9pt, line height 1.4. "•" bullets. Secondary text `#555555`. Skills inline, comma-separated. |
+| Modern   | Navy (`#1A1F2E`) sidebar 35% on every page: name 18pt, latest job role, contact fields with labels, skills as pills. Main 65%: Summary, Experience, Education, Projects with `#D50032` 11pt headings.                               |
+| Minimal  | Single column, no rules or fills. Name 20pt, wide letter spacing, centered; contact line 8pt gray, centered. Headings 9pt gray. Body 9pt `#333333`, line height 1.6. "–" bullets.                                                   |
+
+Order in Classic and Minimal: Summary, Experience, Education, Skills, Projects. The contact line includes LinkedIn, GitHub and website when filled in. Helvetica has no light cut, so Minimal's weight-300 name renders in regular weight.
+
+The analysis-page **Export PDF** (jsPDF, `exportPdf.js`) is a separate feature and is unchanged.
 
 ---
 

@@ -62,13 +62,21 @@ ro-fontend/
 │   │   │   ├── ArrayEntryCard.jsx
 │   │   │   ├── BulletListEditor.jsx
 │   │   │   ├── TagInput.jsx
-│   │   │   └── steps/
-│   │   │       ├── ContactStep.jsx
-│   │   │       ├── BasicInfoStep.jsx
-│   │   │       ├── ExperienceStep.jsx
-│   │   │       ├── EducationStep.jsx
-│   │   │       ├── SkillsStep.jsx
-│   │   │       └── ProjectsStep.jsx
+│   │   │   ├── steps/
+│   │   │   │   ├── ContactStep.jsx
+│   │   │   │   ├── BasicInfoStep.jsx
+│   │   │   │   ├── ExperienceStep.jsx
+│   │   │   │   ├── EducationStep.jsx
+│   │   │   │   ├── SkillsStep.jsx
+│   │   │   │   └── ProjectsStep.jsx
+│   │   │   └── pdf/                    # react-pdf resume templates (preview page)
+│   │   │       ├── ClassicTemplate.jsx     # single column
+│   │   │       ├── ModernTemplate.jsx      # navy sidebar 35% + main 65%
+│   │   │       ├── MinimalTemplate.jsx     # single column, no rules or fills
+│   │   │       ├── PdfSection.jsx          # heading kept on the same page as the first item
+│   │   │       ├── pdfUtils.js             # safe, contactLine, contactItems, getBullets, normalizeResume
+│   │   │       ├── templates.js            # template ids + names (no react-pdf import)
+│   │   │       └── templateComponents.js   # id → template component (loaded with PdfPreview)
 │   │   ├── sidebar/
 │   │   │   ├── Sidebar.jsx             # nav items, collapse toggle, mobile drawer + backdrop
 │   │   │   └── SidebarItem.jsx         # NavLink: icon, label, path, collapsed (+ isActive override)
@@ -79,6 +87,10 @@ ro-fontend/
 │   │   │   ├── Features.jsx
 │   │   │   ├── FAQ.jsx                 # <details> accordion
 │   │   │   └── Footer.jsx
+│   │   ├── preview/
+│   │   │   ├── PreviewPickerCard.jsx   # /preview card: title, created, Preview
+│   │   │   ├── TemplatePicker.jsx      # radio group of template cards
+│   │   │   └── PdfPreview.jsx          # lazy: PDFDownloadLink + PDFViewer (@react-pdf/renderer)
 │   │   └── analyze/
 │   │       ├── AnalyzeForm.jsx
 │   │       ├── AnalyzeResult.jsx
@@ -89,7 +101,8 @@ ro-fontend/
 │   │       ├── scoreColor.js           # score → color class, clamp
 │   │       ├── AnalysisHistory.jsx
 │   │       ├── AnalysisHistoryRow.jsx
-│   │       └── ResumePickerCard.jsx    # /analyze card: created, last analyzed, Analyze
+│   │       ├── ResumePickerCard.jsx    # /analyze card: created, last analyzed, Analyze
+│   │       └── AnalysisSidebar.jsx     # preview page: latest analysis, or "No analysis yet"
 │   ├── layouts/
 │   │   ├── AppLayout.jsx               # grid: Sidebar | Navbar(authenticated) / <main><Outlet/>
 │   │   ├── LandingLayout.jsx           # LandingNavbar + <main><Outlet/> + Footer
@@ -107,6 +120,8 @@ ro-fontend/
 │   │   ├── ResumeEdit.jsx
 │   │   ├── Analyze.jsx
 │   │   ├── AnalyzePicker.jsx           # /analyze
+│   │   ├── PreviewPicker.jsx           # /preview
+│   │   ├── ResumePreview.jsx           # /resume/:id/preview
 │   │   ├── Logout.jsx
 │   │   └── NotFound.jsx
 │   ├── context/
@@ -179,7 +194,9 @@ ProtectedRoute
     ├── /resume/new        → ResumeNew   (lazy)
     ├── /resume/:id/edit   → ResumeEdit  (lazy)
     ├── /analyze           → AnalyzePicker (lazy)
-    └── /resume/:id/analyze→ Analyze     (lazy)
+    ├── /resume/:id/analyze→ Analyze     (lazy)
+    ├── /preview           → PreviewPicker (lazy)
+    └── /resume/:id/preview→ ResumePreview (lazy; PdfPreview lazy inside it)
 ```
 
 Each layout wraps `<Outlet/>` in `<Suspense fallback={<Spinner page/>}>`.
@@ -194,10 +211,10 @@ AppLayout   (grid areas "sidebar navbar" / "sidebar content"; state: collapsed, 
 ├── Sidebar          props: collapsed, onToggleCollapsed, mobileOpen, onCloseMobile, closeButtonRef
 │   ├── backdrop (mobile, when open)
 │   ├── drawer header: Link "ResumeAI" + close button (mobile only)
-│   ├── SidebarItem × 5  props: icon, label, path, collapsed, isActive?, onClick?
+│   ├── SidebarItem × 6  props: icon, label, path, collapsed, isActive?, onClick?
 │   │   Overview (/dashboard) · My Resumes (/dashboard/resumes) ·
 │   │   Create Resume (on /resume/new: dispatch NEW_RESUME_EVENT) ·
-│   │   Analyze (/analyze) · Drafts (/dashboard/drafts)
+│   │   Analyze (/analyze) · Preview (/preview) · Drafts (/dashboard/drafts)
 │   └── collapse toggle (md and up)
 ├── Navbar variant="authenticated"   props: menuOpen, onOpenMenu, menuButtonRef
 │   ├── Button ghost hamburger (< md) → open drawer

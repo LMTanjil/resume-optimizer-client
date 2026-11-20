@@ -20,6 +20,8 @@ const ResumeNew = lazy(() => import("./pages/ResumeNew"))
 const ResumeEdit = lazy(() => import("./pages/ResumeEdit"))
 const Analyze = lazy(() => import("./pages/Analyze"))
 const AnalyzePicker = lazy(() => import("./pages/AnalyzePicker"))
+const PreviewPicker = lazy(() => import("./pages/PreviewPicker"))
+const ResumePreview = lazy(() => import("./pages/ResumePreview"))
 const NotFound = lazy(() => import("./pages/NotFound"))
 
 export const router = createBrowserRouter([
@@ -59,6 +61,8 @@ export const router = createBrowserRouter([
           { path: "/resume/:id/edit", element: <ResumeEdit /> },
           { path: "/analyze", element: <AnalyzePicker /> },
           { path: "/resume/:id/analyze", element: <Analyze /> },
+          { path: "/preview", element: <PreviewPicker /> },
+          { path: "/resume/:id/preview", element: <ResumePreview /> },
         ],
       },
     ],

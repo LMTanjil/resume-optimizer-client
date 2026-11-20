@@ -3,6 +3,7 @@ import {
   ChevronLeft,
   ChevronRight,
   FilePlus,
+  FileOutput,
   FileText,
   FolderOpen,
   LayoutDashboard,
@@ -54,6 +55,14 @@ export default function Sidebar({
       path: "/analyze",
       // Also active on a specific resume's analyze page.
       isActive: pathname === "/analyze" || Boolean(matchPath("/resume/:id/analyze", pathname)),
+    },
+    {
+      key: "preview",
+      icon: FileOutput,
+      label: "Preview",
+      path: "/preview",
+      // Also active on a specific resume's preview page.
+      isActive: pathname === "/preview" || Boolean(matchPath("/resume/:id/preview", pathname)),
     },
     {
       key: "drafts",

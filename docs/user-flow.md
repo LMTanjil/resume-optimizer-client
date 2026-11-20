@@ -21,6 +21,8 @@ Behavior details are referenced by ID from [functional-requirements.md](function
 | `/resume/:id/edit`      | protected  | AppLayout     | ResumeEdit                       |
 | `/analyze`              | protected  | AppLayout     | AnalyzePicker (choose a resume)  |
 | `/resume/:id/analyze`   | protected  | AppLayout     | Analyze                          |
+| `/preview`              | protected  | AppLayout     | PreviewPicker (choose a resume)  |
+| `/resume/:id/preview`   | protected  | AppLayout     | ResumePreview                    |
 | `/logout`               | protected  | —             | Logout (logs out, then `/login`) |
 | `*`                     | any        | PublicLayout  | NotFound                         |
 

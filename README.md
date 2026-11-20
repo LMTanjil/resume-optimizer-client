@@ -8,7 +8,8 @@ React frontend for the ResumeAI application.
 - Tailwind CSS (dark/light mode)
 - React Router v6
 - Axios
-- jsPDF
+- jsPDF (analysis export)
+- @react-pdf/renderer (resume preview and PDF templates)
 - react-hot-toast
 - date-fns
 - Lucide React
@@ -106,6 +107,8 @@ src/
 | `/resume/:id/edit`      | Edit resume                      |
 | `/resume/:id/analyze`   | Analyze resume                   |
 | `/analyze`              | Pick a resume to analyze         |
+| `/resume/:id/preview`   | Preview and download as PDF      |
+| `/preview`              | Pick a resume to preview         |
 | `/privacy-policy`       | Privacy policy                   |
 | `/terms-and-conditions` | Terms and conditions             |
 
