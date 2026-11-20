@@ -1,5 +1,5 @@
 import { formatIsoDay } from "./dateUtils"
-import { normalizeContent, slugify } from "./resumeData"
+import { CONTACT_FIELDS, normalizeContent, slugify } from "./resumeData"
 
 // Clean text-only PDF: resume sections, then the analysis (docs/functional-requirements.md FR-AN-06).
 // jsPDF is imported on demand so it never lands in the main bundle.
@@ -53,9 +53,17 @@ export async function exportPdf(resume, analysis) {
   // 1. Resume title
   write(resume?.title || contact.name || "Resume", { size: FONT.name, bold: true, gapAfter: 4 })
 
-  // 2. Contact details: name | email | phone | location, non-empty fields only; no line if none.
-  const contactLine = [contact.name, contact.email, contact.phone, contact.location]
-    .map((value) => value.trim())
+  // 2. Contact details: name | email | phone | location | linkedin | github | website,
+  // non-empty fields only; no line if none. Links drop "https://" and "www." to stay short.
+  const shortUrl = (value) =>
+    value
+      .replace(/^https?:\/\//i, "")
+      .replace(/^www\./i, "")
+      .replace(/\/$/, "")
+  const contactLine = CONTACT_FIELDS.map((key) => {
+    const value = contact[key].trim()
+    return ["linkedin", "github", "website"].includes(key) ? shortUrl(value) : value
+  })
     .filter(Boolean)
     .join(" | ")
   if (contactLine) write(contactLine, { size: FONT.meta })

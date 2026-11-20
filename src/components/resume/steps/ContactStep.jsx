@@ -21,6 +21,30 @@ const FIELDS = [
   },
   { key: "phone", label: "Phone", max: LIMITS.phone, type: "tel", autoComplete: "tel" },
   { key: "location", label: "Location", max: LIMITS.location, placeholder: "City, Country" },
+  {
+    key: "linkedin",
+    label: "LinkedIn",
+    max: LIMITS.profileUrl,
+    type: "url",
+    autoComplete: "url",
+    placeholder: "linkedin.com/in/your-name",
+  },
+  {
+    key: "github",
+    label: "GitHub",
+    max: LIMITS.profileUrl,
+    type: "url",
+    autoComplete: "url",
+    placeholder: "github.com/your-username",
+  },
+  {
+    key: "website",
+    label: "Website",
+    max: LIMITS.profileUrl,
+    type: "url",
+    autoComplete: "url",
+    placeholder: "your-site.com",
+  },
 ]
 
 export default function ContactStep({ form, importer }) {

@@ -289,14 +289,14 @@ If `getResumes()` fails: an inline error panel (`AlertCircle`, the API or networ
 
 ### FR-BLD-02 Steps
 
-| #   | Step            | Fields                                                                                      |
-| --- | --------------- | ------------------------------------------------------------------------------------------- |
-| 1   | Contact Details | name*, email*, phone, location                                                              |
-| 2   | Basic Info      | title*, summary (textarea + counter, 500)                                                   |
-| 3   | Experience      | list of entries: company*, role*, duration* (placeholder "Jan 2023 - Present"), bullets     |
-| 4   | Education       | list of entries: institution*, degree*, year                                                |
-| 5   | Skills          | TagInput                                                                                    |
-| 6   | Projects        | list of entries: name*, description* (textarea + counter, 500), tech* (TagInput, ≥ 1), link |
+| #   | Step            | Fields                                                                                                                                                                                              |
+| --- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Contact Details | name*, email*, phone, location, LinkedIn, GitHub, website (links: optional; `https://` is added on save when left out, e.g. `www.jane.dev` becomes `https://www.jane.dev`; must have a real domain) |
+| 2   | Basic Info      | title*, summary (textarea + counter, 500)                                                                                                                                                           |
+| 3   | Experience      | list of entries: company*, role*, duration* (placeholder "Jan 2023 - Present"), bullets                                                                                                             |
+| 4   | Education       | list of entries: institution*, degree*, year                                                                                                                                                        |
+| 5   | Skills          | TagInput                                                                                                                                                                                            |
+| 6   | Projects        | list of entries: name*, description* (textarea + counter, 500), tech* (TagInput, ≥ 1), link                                                                                                         |
 
 `*` = required. Limits and formats are in [api-contracts.md §3.2](api-contracts.md).
 
@@ -506,13 +506,13 @@ Shown when `current` exists. Otherwise the section shows the muted text "No anal
   - The date is the analysis `created_at` in local time.
   - slug: lowercase, non-alphanumerics become `-`, repeated dashes collapse, leading and trailing dashes are trimmed; empty becomes `resume`.
 - **Content** (clean text, section headings, automatic page breaks, empty sections omitted):
-  1. Contact name (large), then a line `email · phone · location`.
-  2. Resume title.
+  1. Resume title (large).
+  2. Contact line: `name | email | phone | location | linkedin | github | website`, non-empty fields only (links shown without `https://` / `www.`); omitted when all are empty.
   3. Summary.
   4. Experience: role at company, duration, `•` bullets.
   5. Education: degree, institution, year.
   6. Skills: comma-separated.
-  7. Projects: name, description, "Tech: …", link.
+  7. Projects: name, description, "Tech: …" (wrapped to the page width), link.
   8. A divider, then **Analysis**: date, "Match score: 62%", missing keywords, strengths, numbered suggestions.
 - Uses the resume data loaded on the Analyze page (the saved version).
 

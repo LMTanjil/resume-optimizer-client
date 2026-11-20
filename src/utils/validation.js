@@ -5,6 +5,7 @@ import {
   STEPS,
   VALIDATION_MESSAGES as MSG,
 } from "../constants"
+import { PROFILE_LINK_FIELDS, withHttps } from "./resumeData"
 
 // All validation rules live here — docs/error-handling.md §6.
 // Builder errors are keyed by field path, e.g. "contact.email" or "experience.<itemId>.company".
@@ -24,6 +25,12 @@ export function isValidHttpUrl(value) {
   } catch {
     return false
   }
+}
+
+function isValidProfileLink(value) {
+  if (!isValidHttpUrl(value)) return false
+  const { hostname } = new URL(value)
+  return hostname.includes(".") && !hostname.startsWith(".") && !hostname.endsWith(".")
 }
 
 // ---------- Auth forms ----------
@@ -67,6 +74,14 @@ const STEP_VALIDATORS = {
     if (isBlank(name)) errors["contact.name"] = MSG.required("Name")
     if (isBlank(email)) errors["contact.email"] = MSG.required("Email")
     else if (!isValidEmail(email)) errors["contact.email"] = MSG.email
+    // Profile links are optional. "https://" may be left out (it's added on save), so validate the
+    // value that will be sent, and require a real domain (a dot in the host name).
+    PROFILE_LINK_FIELDS.forEach((key) => {
+      const value = content.contact[key]
+      if (!isBlank(value) && !isValidProfileLink(withHttps(value))) {
+        errors[`contact.${key}`] = MSG.profileLink
+      }
+    })
     return errors
   },
   basic: ({ title }) => (isBlank(title) ? { title: MSG.required("Title") } : {}),

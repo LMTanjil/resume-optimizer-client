@@ -119,7 +119,15 @@ Both `POST /auth/register` and `POST /auth/login` return:
   "user_id": 1,
   "title": "Frontend Developer Resume",
   "content": {
-    "contact": { "name": "", "email": "", "phone": "", "location": "" },
+    "contact": {
+      "name": "",
+      "email": "",
+      "phone": "",
+      "location": "",
+      "linkedin": "",
+      "github": "",
+      "website": ""
+    },
     "summary": "",
     "experience": [],
     "education": [],
@@ -139,12 +147,17 @@ All strings are trimmed before saving. Limits are hard limits (`maxLength`; typi
 
 **contact**
 
-| Field    | Type   | Required | Max | Rules           |
-| -------- | ------ | -------- | --- | --------------- |
-| name     | string | ✅       | 100 |                 |
-| email    | string | ✅       | 254 | email format    |
-| phone    | string | —        | 30  | no format check |
-| location | string | —        | 100 |                 |
+| Field    | Type   | Required | Max | Rules                                                   |
+| -------- | ------ | -------- | --- | ------------------------------------------------------- |
+| name     | string | ✅       | 100 |                                                         |
+| email    | string | ✅       | 254 | email format                                            |
+| phone    | string | —        | 30  | no format check                                         |
+| location | string | —        | 100 |                                                         |
+| linkedin | string | —        | 200 | http(s) URL; `https://` added if typed without a scheme |
+| github   | string | —        | 200 | http(s) URL; `https://` added if typed without a scheme |
+| website  | string | —        | 200 | http(s) URL; `https://` added if typed without a scheme |
+
+The frontend always sends all seven keys (empty ones as `""`). The backend (commit `b4510ad`) accepts the same seven string fields but enforces neither the required fields nor the limits; those are frontend-only.
 
 **title / summary**
 

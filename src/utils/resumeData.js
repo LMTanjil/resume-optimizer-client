@@ -7,6 +7,32 @@ export const newId = () =>
     : `${Date.now()}-${Math.random().toString(16).slice(2)}`
 
 const str = (value) => (typeof value === "string" ? value : "")
+
+// Every contact field, in display order. All are strings ("" when empty).
+export const CONTACT_FIELDS = [
+  "name",
+  "email",
+  "phone",
+  "location",
+  "linkedin",
+  "github",
+  "website",
+]
+
+// Contact fields holding web links. Users may type them without a scheme.
+export const PROFILE_LINK_FIELDS = ["linkedin", "github", "website"]
+
+const mapContact = (contact, fn) =>
+  Object.fromEntries(CONTACT_FIELDS.map((key) => [key, fn(contact?.[key])]))
+
+// Adds "https://" when the user typed no scheme: "github.com/jane" -> "https://github.com/jane",
+// "www.jane.dev" -> "https://www.jane.dev". http(s) links are kept as typed. A value with some
+// other scheme ("ftp://…", "mailto:…") is left unchanged so validation rejects it.
+export function withHttps(value) {
+  const text = typeof value === "string" ? value.trim() : ""
+  if (!text || /^https?:\/\//i.test(text) || /^[a-z][a-z0-9+.-]*:/i.test(text)) return text
+  return `https://${text.replace(/^\/+/, "")}`
+}
 const arr = (value) => (Array.isArray(value) ? value : [])
 const trim = (value) => str(value).trim()
 
@@ -26,12 +52,7 @@ export function normalizeContent(content) {
   const source = content && typeof content === "object" ? content : {}
   const contact = source.contact ?? {}
   return {
-    contact: {
-      name: str(contact.name),
-      email: str(contact.email),
-      phone: str(contact.phone),
-      location: str(contact.location),
-    },
+    contact: mapContact(contact, str),
     summary: str(source.summary),
     experience: arr(source.experience).map((item) => ({
       company: str(item?.company),
@@ -82,12 +103,12 @@ export function toPayload(data) {
   return {
     title: trim(data.title),
     content: {
-      contact: {
-        name: trim(content.contact.name),
-        email: trim(content.contact.email),
-        phone: trim(content.contact.phone),
-        location: trim(content.contact.location),
-      },
+      contact: Object.fromEntries(
+        CONTACT_FIELDS.map((key) => {
+          const value = trim(content.contact[key])
+          return [key, PROFILE_LINK_FIELDS.includes(key) ? withHttps(value) : value]
+        })
+      ),
       summary: trim(content.summary),
       experience: content.experience.map((item) => ({
         company: trim(item.company),
